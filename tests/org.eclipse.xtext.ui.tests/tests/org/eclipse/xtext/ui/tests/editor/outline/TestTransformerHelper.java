@@ -16,11 +16,11 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.xtext.resource.ILocationInFileProvider;
 import org.eclipse.xtext.ui.common.editor.outline.impl.simplestructure.A;
 import org.eclipse.xtext.ui.common.editor.outline.impl.simplestructure.B;
-import org.eclipse.xtext.ui.editor.outline.ContentOutlineNode;
-import org.eclipse.xtext.ui.editor.outline.CreateNode;
-import org.eclipse.xtext.ui.editor.outline.DefaultContentOutlineNodeFactory;
-import org.eclipse.xtext.ui.editor.outline.GetChildren;
-import org.eclipse.xtext.ui.editor.outline.transformer.AbstractDeclarativeSemanticModelTransformer;
+import org.eclipse.xtext.ui.editor.outline.old.ContentOutlineNode;
+import org.eclipse.xtext.ui.editor.outline.old.CreateNode;
+import org.eclipse.xtext.ui.editor.outline.old.DefaultContentOutlineNodeFactory;
+import org.eclipse.xtext.ui.editor.outline.old.GetChildren;
+import org.eclipse.xtext.ui.editor.outline.old.transformer.AbstractDeclarativeSemanticModelTransformer;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
 import org.eclipse.xtext.util.TextLocation;
 

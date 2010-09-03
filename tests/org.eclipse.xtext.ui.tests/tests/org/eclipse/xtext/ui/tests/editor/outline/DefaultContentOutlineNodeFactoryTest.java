@@ -8,8 +8,8 @@
  *******************************************************************************/
 package org.eclipse.xtext.ui.tests.editor.outline;
 
-import org.eclipse.xtext.ui.editor.outline.ContentOutlineNode;
-import org.eclipse.xtext.ui.editor.outline.IContentOutlineNode;
+import org.eclipse.xtext.ui.editor.outline.old.ContentOutlineNode;
+import org.eclipse.xtext.ui.editor.outline.old.IContentOutlineNode;
 
 /**
  * @author Michael Clay - Initial contribution and API

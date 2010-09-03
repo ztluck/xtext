@@ -54,12 +54,12 @@ public abstract class AbstractDomainmodelUiModule extends DefaultUiModule {
 	}
 
 	// contributed by org.eclipse.xtext.ui.generator.outline.OutlineNodeAdapterFactoryFragment
-	public Class<? extends org.eclipse.xtext.ui.editor.outline.actions.IContentOutlineNodeAdapterFactory> bindIContentOutlineNodeAdapterFactory() {
+	public Class<? extends org.eclipse.xtext.ui.editor.outline.old.actions.IContentOutlineNodeAdapterFactory> bindIContentOutlineNodeAdapterFactory() {
 		return org.eclipse.xtext.example.ui.outline.DomainmodelOutlineNodeAdapterFactory.class;
 	}
 
 	// contributed by org.eclipse.xtext.ui.generator.outline.TransformerFragment
-	public Class<? extends org.eclipse.xtext.ui.editor.outline.transformer.ISemanticModelTransformer> bindISemanticModelTransformer() {
+	public Class<? extends org.eclipse.xtext.ui.editor.outline.old.transformer.ISemanticModelTransformer> bindISemanticModelTransformer() {
 		return org.eclipse.xtext.example.ui.outline.DomainmodelTransformer.class;
 	}
 

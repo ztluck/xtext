@@ -3,7 +3,7 @@
 */
 package org.eclipse.xtext.example.ui.outline;
 
-import org.eclipse.xtext.ui.editor.outline.actions.DefaultContentOutlineNodeAdapterFactory;
+import org.eclipse.xtext.ui.editor.outline.old.actions.DefaultContentOutlineNodeAdapterFactory;
 
 public class FowlerDslOutlineNodeAdapterFactory extends DefaultContentOutlineNodeAdapterFactory {
 

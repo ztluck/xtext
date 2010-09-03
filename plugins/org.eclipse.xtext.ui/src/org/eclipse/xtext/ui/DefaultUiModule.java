@@ -56,13 +56,13 @@ import org.eclipse.xtext.ui.editor.model.DocumentPartitioner;
 import org.eclipse.xtext.ui.editor.model.IResourceForEditorInputFactory;
 import org.eclipse.xtext.ui.editor.model.JavaClassPathResourceForIEditorInputFactory;
 import org.eclipse.xtext.ui.editor.model.PartitionTokenScanner;
-import org.eclipse.xtext.ui.editor.outline.IContentOutlineNodeComparer;
-import org.eclipse.xtext.ui.editor.outline.IOutlineTreeProvider;
-import org.eclipse.xtext.ui.editor.outline.XtextContentOutlinePage;
-import org.eclipse.xtext.ui.editor.outline.actions.IActionBarContributor;
-import org.eclipse.xtext.ui.editor.outline.transformer.DefaultSemanticModelTransformer;
-import org.eclipse.xtext.ui.editor.outline.transformer.ISemanticModelTransformer;
-import org.eclipse.xtext.ui.editor.outline.transformer.TransformingTreeProvider;
+import org.eclipse.xtext.ui.editor.outline.old.IContentOutlineNodeComparer;
+import org.eclipse.xtext.ui.editor.outline.old.IOutlineTreeProvider;
+import org.eclipse.xtext.ui.editor.outline.old.XtextContentOutlinePage;
+import org.eclipse.xtext.ui.editor.outline.old.actions.IActionBarContributor;
+import org.eclipse.xtext.ui.editor.outline.old.transformer.DefaultSemanticModelTransformer;
+import org.eclipse.xtext.ui.editor.outline.old.transformer.ISemanticModelTransformer;
+import org.eclipse.xtext.ui.editor.outline.old.transformer.TransformingTreeProvider;
 import org.eclipse.xtext.ui.editor.preferences.IPreferenceStoreInitializer;
 import org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider;
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionProvider;
@@ -237,7 +237,7 @@ public class DefaultUiModule extends AbstractGenericModule {
 	}
 
 	public void configureOutlineLabelProvider(com.google.inject.Binder binder) {
-		binder.bind(org.eclipse.jface.viewers.ILabelProvider.class).annotatedWith(org.eclipse.xtext.ui.editor.outline.OutlineLabelProvider.class).to(org.eclipse.jface.viewers.ILabelProvider.class);
+		binder.bind(org.eclipse.jface.viewers.ILabelProvider.class).annotatedWith(org.eclipse.xtext.ui.editor.outline.old.OutlineLabelProvider.class).to(org.eclipse.jface.viewers.ILabelProvider.class);
 	}
 
 	public void configureContentProposalLabelProvider(com.google.inject.Binder binder) {

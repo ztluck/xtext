@@ -11,8 +11,8 @@ import org.eclipse.xtext.example.fowlerdsl.Command;
 import org.eclipse.xtext.example.fowlerdsl.Event;
 import org.eclipse.xtext.example.fowlerdsl.State;
 import org.eclipse.xtext.example.fowlerdsl.Statemachine;
-import org.eclipse.xtext.ui.editor.outline.ContentOutlineNode;
-import org.eclipse.xtext.ui.editor.outline.transformer.AbstractDeclarativeSemanticModelTransformer;
+import org.eclipse.xtext.ui.editor.outline.old.ContentOutlineNode;
+import org.eclipse.xtext.ui.editor.outline.old.transformer.AbstractDeclarativeSemanticModelTransformer;
 
 /**
  * customization of the default outline structure

@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eclipse.xtext.example.arithmetics.ui.outline;
 
-import org.eclipse.xtext.ui.editor.outline.actions.DefaultContentOutlineNodeAdapterFactory;
+import org.eclipse.xtext.ui.editor.outline.old.actions.DefaultContentOutlineNodeAdapterFactory;
 
 public class ArithmeticsOutlineNodeAdapterFactory extends DefaultContentOutlineNodeAdapterFactory {
 

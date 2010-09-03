@@ -19,7 +19,7 @@ import org.eclipse.xtext.junit.AbstractXtextTests;
 import org.eclipse.xtext.resource.ILocationInFileProvider;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
-import org.eclipse.xtext.ui.editor.outline.DefaultContentOutlineNodeFactory;
+import org.eclipse.xtext.ui.editor.outline.old.DefaultContentOutlineNodeFactory;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
 import org.eclipse.xtext.util.TextLocation;
 import org.eclipse.xtext.util.concurrent.IStateAccess;

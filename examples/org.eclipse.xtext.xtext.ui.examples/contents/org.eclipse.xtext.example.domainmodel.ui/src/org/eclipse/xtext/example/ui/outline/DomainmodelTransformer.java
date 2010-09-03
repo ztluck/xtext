@@ -4,7 +4,7 @@
 package org.eclipse.xtext.example.ui.outline;
 
 import org.eclipse.xtext.example.domainmodel.DomainModel;
-import org.eclipse.xtext.ui.editor.outline.transformer.AbstractDeclarativeSemanticModelTransformer;
+import org.eclipse.xtext.ui.editor.outline.old.transformer.AbstractDeclarativeSemanticModelTransformer;
 
 /**
  * customization of the default outline structure

@@ -9,8 +9,8 @@
 package org.eclipse.xtext.xtext.ui.editor.outline;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.xtext.ui.editor.outline.XtextContentOutlinePage;
-import org.eclipse.xtext.ui.editor.outline.actions.DeclarativeActionBarContributor;
+import org.eclipse.xtext.ui.editor.outline.old.XtextContentOutlinePage;
+import org.eclipse.xtext.ui.editor.outline.old.actions.DeclarativeActionBarContributor;
 
 /**
  * @author Peter Friese - Initial contribution and API

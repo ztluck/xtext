@@ -119,7 +119,7 @@ public abstract class AbstractXbaseUiModule extends DefaultUiModule {
 	}
 
 	// contributed by org.eclipse.xtext.ui.generator.outline.TransformerFragment
-	public Class<? extends org.eclipse.xtext.ui.editor.outline.transformer.ISemanticModelTransformer> bindISemanticModelTransformer() {
+	public Class<? extends org.eclipse.xtext.ui.editor.outline.old.transformer.ISemanticModelTransformer> bindISemanticModelTransformer() {
 		return org.eclipse.xtext.xbase.ui.outline.XbaseTransformer.class;
 	}
 

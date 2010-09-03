@@ -12,8 +12,8 @@ import junit.framework.TestCase;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.xtext.ui.editor.outline.ContentOutlineNode;
-import org.eclipse.xtext.ui.editor.outline.IContentOutlineNodeForTextSelectionFinder;
+import org.eclipse.xtext.ui.editor.outline.old.ContentOutlineNode;
+import org.eclipse.xtext.ui.editor.outline.old.IContentOutlineNodeForTextSelectionFinder;
 
 /**
  * @author koehnlein - Initial contribution and API

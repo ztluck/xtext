@@ -1,0 +1,1 @@
+- org.eclipse.ui.views.contentoutline.ContentOutlinePage does not allow extension with an lazy tree viewer

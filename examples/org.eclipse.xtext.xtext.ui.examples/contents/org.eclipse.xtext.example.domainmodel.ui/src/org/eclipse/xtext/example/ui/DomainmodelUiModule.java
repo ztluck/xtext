@@ -5,12 +5,13 @@ package org.eclipse.xtext.example.ui;
 
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.xtext.example.ui.autoedit.FantasticAutoEditStrategy;
 import org.eclipse.xtext.example.ui.linking.DomainmodelLinkingDiagnosticMessageProvider;
 import org.eclipse.xtext.example.ui.navigation.DomainmodelHyperlinkHelper;
 import org.eclipse.xtext.linking.ILinkingDiagnosticMessageProvider;
 import org.eclipse.xtext.ui.editor.hyperlinking.IHyperlinkHelper;
-
+import org.eclipse.xtext.ui.editor.outline.OutlinePage;
 
 /**
  * Use this class to register components to be used within the IDE.
@@ -20,15 +21,20 @@ public class DomainmodelUiModule extends org.eclipse.xtext.example.ui.AbstractDo
 	public DomainmodelUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
 	}
-	
+
+	@Override
+	public Class<? extends IContentOutlinePage> bindIContentOutlinePage() {
+		return OutlinePage.class;
+	}
+
 	public Class<? extends ILinkingDiagnosticMessageProvider> bindILinkingDiagnosticMessageProvider() {
 		return DomainmodelLinkingDiagnosticMessageProvider.class;
 	}
-	
+
 	public Class<? extends IHyperlinkHelper> bindIHyperlinkHelper() {
 		return DomainmodelHyperlinkHelper.class;
 	}
-	
+
 	public Class<? extends IAutoEditStrategy> bindIAutoEditStrategy() {
 		return FantasticAutoEditStrategy.class;
 	}

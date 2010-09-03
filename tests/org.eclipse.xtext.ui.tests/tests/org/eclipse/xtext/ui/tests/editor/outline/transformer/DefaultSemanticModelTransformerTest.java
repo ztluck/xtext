@@ -8,8 +8,8 @@
  *******************************************************************************/
 package org.eclipse.xtext.ui.tests.editor.outline.transformer;
 
-import org.eclipse.xtext.ui.editor.outline.ContentOutlineNode;
-import org.eclipse.xtext.ui.editor.outline.transformer.DefaultSemanticModelTransformer;
+import org.eclipse.xtext.ui.editor.outline.old.ContentOutlineNode;
+import org.eclipse.xtext.ui.editor.outline.old.transformer.DefaultSemanticModelTransformer;
 import org.eclipse.xtext.ui.tests.editor.outline.AbstractContentOutlineTests;
 
 /**
