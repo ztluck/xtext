@@ -7,43 +7,31 @@
  *******************************************************************************/
 package org.eclipse.xtext.ui.editor.outline;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineNodeFactory;
-import org.eclipse.xtext.ui.editor.outline.impl.EObjectNode;
+import java.util.List;
 
-import com.google.inject.ImplementedBy;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.xtext.ui.editor.model.IXtextDocument;
+import org.eclipse.xtext.util.concurrent.IStateAccess;
 
 /**
  * A model for a node in the outline.
  * 
  * @author koehnlein - Initial contribution and API
  */
-@ImplementedBy(EObjectNode.class)
-public interface IOutlineNode extends IAdaptable {
+public interface IOutlineNode extends IAdaptable, IStateAccess<EObject> {
 
-	Object getID();
-	
 	Object getText();
 
 	Image getImage();
-	
-	int getChildCount();
-	
-	void setChildCount(int index);
-	
-	/**
-	 * Only called from within {@link org.eclipse.xtext.util.concurrent.IUnitOfWork}s.
-	 * 
-	 * @author koehnlein - Initial contribution and API
-	 */
-	@ImplementedBy(DefaultOutlineNodeFactory.class)
-	interface IFactory {
-		IOutlineNode createOutlineNode(Object element);
-	
-		Object resolveElement(IOutlineNode node, Resource resource);
-	}
 
-
+	IOutlineNode getParent();
+	
+	List<IOutlineNode> getChildren();
+	
+	boolean hasChildren();
+	
+	IXtextDocument getDocument();
+	
 }

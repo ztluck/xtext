@@ -7,60 +7,48 @@
  *******************************************************************************/
 package org.eclipse.xtext.ui.editor.outline.impl;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.xtext.resource.XtextResource;
-import org.eclipse.xtext.ui.editor.outline.AbstractOutlineContentProvider;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.xtext.ui.editor.outline.IOutlineNode;
-import org.eclipse.xtext.util.concurrent.IUnitOfWork;
+import org.eclipse.xtext.ui.editor.outline.OutlineTreeViewer;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
 /**
+ * The JFace/SWT content provider. The tree of visible IOutlineNodes has already been pre-computed.
+ *  
  * @author koehnlein - Initial contribution and API
  */
-public class SimpleOutlineContentProvider extends AbstractOutlineContentProvider implements ITreeContentProvider {
+public class SimpleOutlineContentProvider implements ITreeContentProvider {
 
-	public Object[] getElements(Object parent) {
-		final IOutlineNode parentNode = asOutlineNode(parent);
-		Iterable<IOutlineNode> childNodes = xtextDocument.readOnly(new IUnitOfWork<Iterable<IOutlineNode>, XtextResource>() {
-			public Iterable<IOutlineNode> exec(XtextResource resource) throws Exception {
-				Object parentElement = nodeFactory.resolveElement(parentNode, resource);
-				return Iterables.transform(treeProvider.getChildren(parentElement), new Function<Object, IOutlineNode>() {
-					public IOutlineNode apply(Object childElement) {
-						return nodeFactory.createOutlineNode(childElement);
-					}
-				});
-			}
-		});
-		return Iterables.toArray(childNodes, Object.class);
+	public void dispose() {
 	}
 
-	public Object[] getChildren(Object parent) {
-		return getElements(parent);
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		Assert.isLegal(viewer instanceof OutlineTreeViewer);
+		Assert.isLegal(newInput == null || newInput instanceof IOutlineNode);
 	}
 
-	@Override
+	public Object[] getElements(Object inputElement) {
+		return getChildren(inputElement);
+	}
+
+	public Object[] getChildren(Object parentElement) {
+		return Iterables.toArray(asOutlineNode(parentElement).getChildren(), IOutlineNode.class);
+	}
+
 	public Object getParent(Object element) {
-		final IOutlineNode elementNode = asOutlineNode(element);
-		IOutlineNode parentNode = xtextDocument.readOnly(new IUnitOfWork<IOutlineNode, XtextResource>() {
-			public IOutlineNode exec(XtextResource resource) throws Exception {
-				Object element = nodeFactory.resolveElement(elementNode, resource);
-				Object parentElement = treeProvider.getParent(element);
-				return nodeFactory.createOutlineNode(parentElement);
-			}
-		});
-		return parentNode;
+		return asOutlineNode(element).getParent();
 	}
 
-	public boolean hasChildren(Object parent) {
-		final IOutlineNode parentNode = asOutlineNode(parent);
-		return xtextDocument.readOnly(new IUnitOfWork<Boolean, XtextResource>() {
-			public Boolean exec(XtextResource resource) throws Exception {
-				Object parentElement = nodeFactory.resolveElement(parentNode, resource);
-				return !Iterables.isEmpty(treeProvider.getChildren(parentElement));
-			}
-		});
+	public boolean hasChildren(Object element) {
+		return asOutlineNode(element).hasChildren();
+	}
+
+	protected IOutlineNode asOutlineNode(Object element) {
+		Assert.isLegal(element instanceof IOutlineNode);
+		return (IOutlineNode) element;
 	}
 
 }

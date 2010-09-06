@@ -7,20 +7,21 @@
  *******************************************************************************/
 package org.eclipse.xtext.ui.editor.outline;
 
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider;
 
 import com.google.inject.ImplementedBy;
 
 /**
- * Defines the containement structure of elements in the outline.
+ * Creates outline nodes.
  * 
  * @author koehnlein - Initial contribution and API
  */
 @ImplementedBy(DefaultOutlineTreeProvider.class)
 public interface IOutlineTreeProvider {
-
-	Iterable<? extends Object> getChildren(Object element);
-
-	Object getParent(Object element);
 	
+	void createChildren(IOutlineNode parent, Resource resource);
+
+	IOutlineNode createRoot(IXtextDocument document, Resource resource);
 }

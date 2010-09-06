@@ -60,9 +60,7 @@ public class AbstractVirtualTreeContentOutlinePage extends Page implements ICont
 	public void createControl(Composite parent) {
 		// orginal call
 		// treeViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		treeViewer = new LazyTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL
-				 | SWT.VIRTUAL
-		);
+		treeViewer = new OutlineTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		treeViewer.addSelectionChangedListener(this);
 	}
 

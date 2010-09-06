@@ -7,25 +7,27 @@
  *******************************************************************************/
 package org.eclipse.xtext.ui.editor.outline.impl;
 
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.ui.editor.outline.IOutlineNode;
 
-public class ResourceNode extends AbstractOutlineNode {
+/**
+ * @author koehnlein - Initial contribution and API
+ */
+public class DocumentNode extends AbstractOutlineNode {
 
-	private URI uri;
-
+	private IXtextDocument document;
 	private Resource resource;
 
-	public ResourceNode(Resource resource, IOutlineNode parent, Image image) {
-		super(parent, image, resource.getURI().lastSegment());
-		this.uri = resource.getURI();
-		this.resource = resource;
+	public DocumentNode(IXtextDocument document, Resource resource, IOutlineNode parent, Image image, String text) {
+		super(parent, image, text);
+		this.document = document;
 	}
 
-	public URI getURI() {
-		return uri;
+	@Override
+	public IXtextDocument getDocument() {
+		return document;
 	}
 
 	public Resource internalGetResource() {
@@ -34,11 +36,11 @@ public class ResourceNode extends AbstractOutlineNode {
 
 	@Override
 	public boolean equals(Object obj) {
-		return super.equals(obj) && uri.equals(((ResourceNode) obj).getURI());
+		return super.equals(obj) && document.equals(((DocumentNode) obj).getDocument());
 	}
-
+	
 	@Override
 	public int hashCode() {
-		return super.hashCode() + 43 * uri.hashCode();
+		return super.hashCode() + 23 * document.hashCode();
 	}
 }

@@ -10,22 +10,42 @@ package org.eclipse.xtext.ui.editor.outline;
 import java.util.Collection;
 import java.util.Set;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.xtext.resource.XtextResource;
+import org.eclipse.xtext.ui.editor.model.IXtextDocument;
+import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 import com.google.common.collect.Sets;
 
 /**
  * @author koehnlein - Initial contribution and API
  */
-public class LazyTreeViewer extends TreeViewer {
+public class OutlineTreeViewer extends TreeViewer {
 
-	public LazyTreeViewer(Composite parent, int styles) {
+	private IOutlineTreeProvider treeProvider;
+	
+	private IXtextDocument xtextDocument;
+	
+	public OutlineTreeViewer(Composite parent, int styles) {
 		super(parent, styles);
 	}
 
+	public void setTreeProvider(IOutlineTreeProvider treeProvider) {
+		this.treeProvider = treeProvider;
+	}
+	
+	public void setXtextDocument(IXtextDocument xtextDocument) {
+		this.xtextDocument = xtextDocument;
+	}
+	
+	/**
+	 * Copied from {@link TreeViewer} and adapted.
+	 */
 	@Override
 	public void setExpandedElements(Object[] elements) {
 		assertElementsNotNull(elements);
@@ -49,6 +69,10 @@ public class LazyTreeViewer extends TreeViewer {
 		internalSetExpanded(expandedElements, getControl());
 	}
 
+	/**
+	 * Copied from {@link TreeViewer} and adapted.
+	 * See 
+	 */
 	protected void internalSetExpanded(Collection<?> expandedElements, Widget widget) {
 		Item[] items = getChildren(widget);
 		for (int i = 0; i < items.length; i++) {
@@ -70,6 +94,23 @@ public class LazyTreeViewer extends TreeViewer {
 			} 
 		}
 	}
+	
+	@Override
+	protected void handleTreeExpand(TreeEvent event) {
+		Object node = event.item.getData();
+		Assert.isLegal(node instanceof IOutlineNode);
+		calculateChildren((IOutlineNode) node);
+		super.handleTreeExpand(event);
+	}
 
+	protected void calculateChildren(final IOutlineNode node) {
+		if(node.hasChildren() && node.getChildren().isEmpty())
+			xtextDocument.readOnly(new IUnitOfWork.Void<XtextResource>(){
+				@Override
+				public void process(XtextResource state) throws Exception {
+					treeProvider.createChildren(node, state);				
+				}
+			});
+	}
 
 }

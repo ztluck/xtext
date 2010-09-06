@@ -7,32 +7,77 @@
  *******************************************************************************/
 package org.eclipse.xtext.ui.editor.outline.impl;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.ui.editor.outline.IOutlineNode;
+import org.eclipse.xtext.util.concurrent.IUnitOfWork;
+
+import com.google.common.collect.Lists;
 
 /**
  * @author koehnlein - Initial contribution and API
  */
 public abstract class AbstractOutlineNode implements IOutlineNode {
 
-	private int childCount = -1;
-
 	private Image image;
 
 	private Object text;
 
-	protected AbstractOutlineNode(Image image, Object text) {
+	private AbstractOutlineNode parent;
+
+	private List<IOutlineNode> children;
+
+	private boolean hasChildren = false;
+
+	protected AbstractOutlineNode(IOutlineNode parent, Image image, Object text) {
 		this.text = text == null ? "<unnamed>" : text;
 		this.image = image;
+		setParent(parent);
 	}
 
-	public int getChildCount() {
-		return childCount;
+	private void setParent(IOutlineNode newParent) {
+		Assert.isLegal(newParent == null || newParent instanceof AbstractOutlineNode);
+		if (parent != null) 
+			parent.removeChild(this);
+		parent = (AbstractOutlineNode) newParent;
+		if (parent != null) 
+			parent.addChild(this);
 	}
 
-	public void setChildCount(int childCount) {
-		this.childCount = childCount;
+	private boolean addChild(IOutlineNode outlineNode) {
+		if (children == null)
+			children = Lists.newArrayList();
+		return children.add(outlineNode);
+	}
+
+	private boolean removeChild(IOutlineNode outlineNode) {
+		if (children == null)
+			return false;
+		return children.remove(outlineNode);
+	}
+
+	public List<IOutlineNode> getChildren() {
+		if (children == null)
+			children = Lists.newArrayList();
+		return Collections.unmodifiableList(children);
+	}
+
+	public IOutlineNode getParent() {
+		return parent;
+	}
+
+	public boolean hasChildren() {
+		return hasChildren || children != null && children.size() > 0;
+	}
+
+	public void setHasChildren(boolean hasChildren) {
+		this.hasChildren = hasChildren;
 	}
 
 	public Object getText() {
@@ -43,9 +88,17 @@ public abstract class AbstractOutlineNode implements IOutlineNode {
 		return image;
 	}
 
+	public IXtextDocument getDocument() {
+		IOutlineNode parent = getParent();
+		if (parent != null) {
+			return parent.getDocument();
+		}
+		return null;
+	}
+
 	@Override
 	public String toString() {
-		return "[" + getClass().getName() + "] " + text.toString();
+		return "[" + getClass().getSimpleName() + "] " + text.toString();
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -53,14 +106,24 @@ public abstract class AbstractOutlineNode implements IOutlineNode {
 		return Platform.getAdapterManager().getAdapter(this, adapterType);
 	}
 
-	@Override
-	public boolean equals(Object object) {
-		return (object != null) && (object.getClass() == getClass())
-				&& ((AbstractOutlineNode) object).getID().equals(getID());
+	public <T> T readOnly(IUnitOfWork<T, EObject> work) {
+		return null;
+	}
+
+	public <T> T modify(IUnitOfWork<T, EObject> work) {
+		return null;
 	}
 
 	@Override
+	public boolean equals(Object obj) {
+		return obj != null
+				&& obj.getClass().equals(getClass())
+				&& ((parent != null && parent.equals(((IOutlineNode) obj).getParent())) 
+						|| (parent == null && ((IOutlineNode) obj).getParent() == null));
+	}
+	
+	@Override
 	public int hashCode() {
-		return getID().hashCode();
+		return getClass().hashCode() + ((parent == null) ? 0 : 11 * parent.hashCode());
 	}
 }
