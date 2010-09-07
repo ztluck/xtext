@@ -16,20 +16,13 @@ public class ResourceNode extends AbstractOutlineNode {
 
 	private URI uri;
 
-	private Resource resource;
-
-	public ResourceNode(Resource resource, IOutlineNode parent, Image image) {
-		super(parent, image, resource.getURI().lastSegment());
+	public ResourceNode(Resource resource, IOutlineNode parent, Image image, boolean hasChildren) {
+		super(parent, image, resource.getURI().lastSegment(), hasChildren);
 		this.uri = resource.getURI();
-		this.resource = resource;
 	}
 
 	public URI getURI() {
 		return uri;
-	}
-
-	public Resource internalGetResource() {
-		return resource;
 	}
 
 	@Override

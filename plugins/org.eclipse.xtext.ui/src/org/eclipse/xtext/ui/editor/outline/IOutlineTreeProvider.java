@@ -14,13 +14,14 @@ import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider;
 import com.google.inject.ImplementedBy;
 
 /**
- * Creates outline nodes.
+ * Creates outline nodes. Only called from within {@link org.eclipse.xtext.util.concurrent.IUnitOfWork}s where the
+ * {@link Resource} can be read safely.
  * 
  * @author koehnlein - Initial contribution and API
  */
 @ImplementedBy(DefaultOutlineTreeProvider.class)
 public interface IOutlineTreeProvider {
-	
+
 	void createChildren(IOutlineNode parent, Resource resource);
 
 	IOutlineNode createRoot(IXtextDocument document, Resource resource);

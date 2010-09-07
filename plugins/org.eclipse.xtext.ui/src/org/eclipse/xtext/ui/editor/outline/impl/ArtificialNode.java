@@ -5,35 +5,18 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.xtext.ui.editor.outline;
+package org.eclipse.xtext.ui.editor.outline.impl;
 
-import java.util.List;
-
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.xtext.ui.editor.model.IXtextDocument;
-import org.eclipse.xtext.util.concurrent.IStateAccess;
+import org.eclipse.xtext.ui.editor.outline.IOutlineNode;
 
 /**
- * A model for a node in the outline.
- * 
  * @author koehnlein - Initial contribution and API
  */
-public interface IOutlineNode extends IAdaptable, IStateAccess<EObject> {
+public class ArtificialNode extends AbstractOutlineNode {
 
-	Object getText();
+	protected ArtificialNode(IOutlineNode parent, Image image, Object text, boolean hasChildren) {
+		super(parent, image, text, hasChildren);
+	}
 
-	Image getImage();
-
-	IOutlineNode getParent();
-	
-	List<IOutlineNode> getChildren();
-	
-	boolean hasChildren();
-	
-	boolean needsCreateChildren();
-	
-	IXtextDocument getDocument();
-	
 }

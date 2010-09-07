@@ -17,7 +17,7 @@ import com.google.inject.Inject;
 /**
  * @author koehnlein - Initial contribution and API
  */
-public class InternalOutlineLabelProvider extends AbstractLabelProvider {
+public class OutlineNodeLabelProvider extends AbstractLabelProvider {
 
 	@Inject
 	private PluginImageHelper pluginImageHelper;

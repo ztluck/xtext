@@ -44,7 +44,7 @@ public class OutlineTreeViewer extends TreeViewer {
 	}
 	
 	/**
-	 * Copied from {@link TreeViewer} and adapted.
+	 * Copied from {@link TreeViewer} and introduced HashSet.
 	 */
 	@Override
 	public void setExpandedElements(Object[] elements) {
@@ -70,8 +70,8 @@ public class OutlineTreeViewer extends TreeViewer {
 	}
 
 	/**
-	 * Copied from {@link TreeViewer} and adapted.
-	 * See 
+	 * Copied from {@link TreeViewer} and adapted for performance reasons.
+	 * See TODO bug ID 
 	 */
 	protected void internalSetExpanded(Collection<?> expandedElements, Widget widget) {
 		Item[] items = getChildren(widget);
@@ -99,18 +99,27 @@ public class OutlineTreeViewer extends TreeViewer {
 	protected void handleTreeExpand(TreeEvent event) {
 		Object node = event.item.getData();
 		Assert.isLegal(node instanceof IOutlineNode);
-		calculateChildren((IOutlineNode) node);
+		calculateOutlineNodeChildren((IOutlineNode) node);
 		super.handleTreeExpand(event);
 	}
 
-	protected void calculateChildren(final IOutlineNode node) {
-		if(node.hasChildren() && node.getChildren().isEmpty())
+	@Override
+	public void expandToLevel(Object elementOrTreePath, int level) {
+		if (elementOrTreePath instanceof IOutlineNode) {
+			IOutlineNode node = (IOutlineNode) elementOrTreePath;
+			calculateOutlineNodeChildren(node);
+		}
+		super.expandToLevel(elementOrTreePath, level);
+	}
+	
+	protected void calculateOutlineNodeChildren(final IOutlineNode node) {
+		if(node.needsCreateChildren()) {
 			xtextDocument.readOnly(new IUnitOfWork.Void<XtextResource>(){
 				@Override
 				public void process(XtextResource state) throws Exception {
 					treeProvider.createChildren(node, state);				
 				}
 			});
+		}
 	}
-
 }

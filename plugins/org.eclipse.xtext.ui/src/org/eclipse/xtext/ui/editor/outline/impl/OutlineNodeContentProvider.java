@@ -20,7 +20,7 @@ import com.google.common.collect.Iterables;
  *  
  * @author koehnlein - Initial contribution and API
  */
-public class SimpleOutlineContentProvider implements ITreeContentProvider {
+public class OutlineNodeContentProvider implements ITreeContentProvider {
 
 	public void dispose() {
 	}

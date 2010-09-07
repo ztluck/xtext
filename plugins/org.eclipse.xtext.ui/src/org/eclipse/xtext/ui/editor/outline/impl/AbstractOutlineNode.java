@@ -35,9 +35,10 @@ public abstract class AbstractOutlineNode implements IOutlineNode {
 
 	private boolean hasChildren = false;
 
-	protected AbstractOutlineNode(IOutlineNode parent, Image image, Object text) {
+	protected AbstractOutlineNode(IOutlineNode parent, Image image, Object text, boolean hasChildren) {
 		this.text = text == null ? "<unnamed>" : text;
 		this.image = image;
+		this.hasChildren = hasChildren;
 		setParent(parent);
 	}
 
@@ -75,9 +76,9 @@ public abstract class AbstractOutlineNode implements IOutlineNode {
 	public boolean hasChildren() {
 		return hasChildren || children != null && children.size() > 0;
 	}
-
-	public void setHasChildren(boolean hasChildren) {
-		this.hasChildren = hasChildren;
+	
+	public boolean needsCreateChildren() {
+		return hasChildren && (children == null || children.size()== 0);
 	}
 
 	public Object getText() {

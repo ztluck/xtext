@@ -6,6 +6,10 @@ Hauptprobleme mit der derzeitigen Outline
 - zu komplizierte Implementierung
 
 
+IOutlineNodes werden jetzt nur on demand und Model-Change-Fall nicht im UI Thread gebaut
+Laziness von Iterables passt hier nicht so gut.
+
+
 =========
 [labels] Provide an additional simple but more efficient label provider
 

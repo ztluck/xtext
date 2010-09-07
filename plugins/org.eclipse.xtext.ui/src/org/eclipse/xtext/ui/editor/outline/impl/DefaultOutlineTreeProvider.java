@@ -25,21 +25,19 @@ public class DefaultOutlineTreeProvider implements IOutlineTreeProvider {
 	@OutlineLabelProvider
 	private ILabelProvider labelProvider;
 
-	private PolymorphicDispatcher<Void> createChildrenDispatcher = PolymorphicDispatcher
-			.createForSingleTarget("createChildren", 2, 2, this);
+	private PolymorphicDispatcher<Void> createChildrenDispatcher = PolymorphicDispatcher.createForSingleTarget(
+			"createChildren", 2, 2, this);
 
 	private PolymorphicDispatcher<AbstractOutlineNode> createNodeDispatcher = PolymorphicDispatcher
 			.createForSingleTarget("createNode", 2, 2, this);
 
 	public IOutlineNode createRoot(IXtextDocument document, Resource resource) {
 		DocumentNode documentNode = new DocumentNode(document, resource, null, labelProvider.getImage(document),
-				labelProvider.getText(document));
-		createChildren(documentNode, resource);
+				labelProvider.getText(document), true);
 		return documentNode;
 	}
 
 	public void createChildren(IOutlineNode parent, Resource resource) {
-		System.out.println("Creating children of " + parent);
 		createChildrenDispatcher.invoke(parent, resource);
 	}
 
@@ -47,7 +45,7 @@ public class DefaultOutlineTreeProvider implements IOutlineTreeProvider {
 	}
 
 	protected void createChildren(DocumentNode parent, Resource resource) {
-			createNodeDispatcher.invoke(parent, resource);
+		createNodeDispatcher.invoke(parent, resource);
 	}
 
 	protected void createChildren(final ResourceNode parentNode, Resource resource) {
@@ -64,15 +62,13 @@ public class DefaultOutlineTreeProvider implements IOutlineTreeProvider {
 	protected IOutlineNode createNode(IOutlineNode parentNode, EObject eObject) {
 		String text = labelProvider.getText(eObject);
 		Image image = labelProvider.getImage(eObject);
-		EObjectNode eObjectNode = new EObjectNode(eObject, parentNode, image, text);
-		eObjectNode.setHasChildren(!eObject.eContents().isEmpty());
+		EObjectNode eObjectNode = new EObjectNode(eObject, parentNode, image, text, !eObject.eContents().isEmpty());
 		return eObjectNode;
 	}
 
 	protected IOutlineNode createNode(IOutlineNode parentNode, Resource resource) {
 		Image image = labelProvider.getImage(resource);
-		ResourceNode resourceNode = new ResourceNode(resource, parentNode, image);
-		resourceNode.setHasChildren(!resource.getContents().isEmpty());
+		ResourceNode resourceNode = new ResourceNode(resource, parentNode, image, !resource.getContents().isEmpty());
 		return resourceNode;
 	}
 

@@ -8,7 +8,6 @@
 package org.eclipse.xtext.ui.editor.outline;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -16,19 +15,19 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.ISourceViewerAware;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.ui.editor.model.IXtextModelListener;
 import org.eclipse.xtext.ui.editor.model.XtextDocumentUtil;
-import org.eclipse.xtext.ui.editor.outline.impl.InternalOutlineLabelProvider;
-import org.eclipse.xtext.ui.editor.outline.impl.SimpleOutlineContentProvider;
+import org.eclipse.xtext.ui.editor.outline.impl.OutlineNodeContentProvider;
+import org.eclipse.xtext.ui.editor.outline.impl.OutlineNodeLabelProvider;
 import org.eclipse.xtext.ui.internal.Activator;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
@@ -39,20 +38,98 @@ import com.google.inject.Inject;
 /**
  * @author koehnlein - Initial contribution and API
  */
-public class OutlinePage extends AbstractVirtualTreeContentOutlinePage implements ISourceViewerAware,
-		IXtextModelListener {
+public class OutlinePage extends AbstractVirtualTreeContentOutlinePage implements ISourceViewerAware {
+
+	protected class RefreshJob extends Job {
+		private RefreshJob() {
+			super("Refreshing outline");
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			try {
+				//				System.out.println("Refreshing outline...");
+				OutlineTreeState formerState = new OutlineTreeState(getTreeViewer());
+				OutlineTreeState newState = new OutlineTreeState();
+				IOutlineNode rootNode = refreshOutlineModel(monitor, formerState, newState);
+				if (!monitor.isCanceled())
+					refreshViewer(rootNode, newState.getExpandedNodes(),
+							newState.getSelectedNodes());
+				//				System.out.println("...done");
+				return Status.OK_STATUS;
+			} catch (Throwable t) {
+				return new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Error refreshing outline", t);
+			}
+		}
+
+		protected IOutlineNode refreshOutlineModel(final IProgressMonitor monitor,
+				final OutlineTreeState formerState, final OutlineTreeState newState) {
+			IOutlineNode rootNode = xtextDocument.readOnly(new IUnitOfWork<IOutlineNode, XtextResource>() {
+				public IOutlineNode exec(XtextResource resource) throws Exception {
+					IOutlineNode rootNode = treeProvider.createRoot(xtextDocument, resource);
+					List<IOutlineNode> createdNodes = Lists.newArrayList();
+					createdNodes.add(rootNode);
+					newState.addExpandedNode(rootNode);
+					for (IOutlineNode formerExpandedNode : formerState.getExpandedNodes()) {
+						if (monitor.isCanceled())
+							return null;
+						expandParentsAndNode(monitor, resource, formerExpandedNode, newState, createdNodes);
+					}
+					for (IOutlineNode formerSelectedNode: formerState.getSelectedNodes()) {
+						if (monitor.isCanceled())
+							return null;
+						IOutlineNode newSelectedNode = findEquivalentNode(formerSelectedNode, createdNodes);
+						if(newSelectedNode != null)
+							newState.addSelectedNode(newSelectedNode);
+					}
+					return rootNode;
+				}
+			});
+			return rootNode;
+		}
+
+		protected IOutlineNode findEquivalentNode(IOutlineNode formerNode, List<IOutlineNode> createdNodes) {
+			int index = createdNodes.indexOf(formerNode);
+			if (index != -1)
+				return createdNodes.get(index);
+			return null;
+		}
+
+		protected boolean expandParentsAndNode(IProgressMonitor monitor, Resource resource,
+				IOutlineNode formerExpandedNode, OutlineTreeState newState, List<IOutlineNode> createdNodes) {
+			if (monitor.isCanceled())
+				return false;
+			IOutlineNode parent = formerExpandedNode.getParent();
+			if (parent != null) {
+				if (!expandParentsAndNode(monitor, resource, parent, newState, createdNodes))
+					return false;
+			}
+			IOutlineNode newNode = findEquivalentNode(formerExpandedNode, createdNodes);
+			if (newNode != null) {
+				newState.addExpandedNode(newNode);
+				if (newNode.needsCreateChildren()) {
+					treeProvider.createChildren(newNode, resource);
+					createdNodes.addAll(newNode.getChildren());
+				}
+				return true;
+			}
+			return false;
+		}
+	}
 
 	private static final Logger LOG = Logger.getLogger(OutlinePage.class);
 
 	@Inject
-	private InternalOutlineLabelProvider labelProvider;
+	private OutlineNodeLabelProvider labelProvider;
 
 	@Inject
-	private SimpleOutlineContentProvider contentProvider;
+	private OutlineNodeContentProvider contentProvider;
 
 	@Inject
 	private IOutlineTreeProvider treeProvider;
 
+	private IXtextModelListener modelListener;
+	
 	private IXtextDocument xtextDocument;
 
 	private Job refreshJob;
@@ -71,16 +148,28 @@ public class OutlinePage extends AbstractVirtualTreeContentOutlinePage implement
 		IOutlineNode rootNode = xtextDocument.readOnly(new IUnitOfWork<IOutlineNode, XtextResource>() {
 			public IOutlineNode exec(XtextResource resource) throws Exception {
 				IOutlineNode rootNode = treeProvider.createRoot(xtextDocument, resource);
+				treeProvider.createChildren(rootNode, resource);
 				return rootNode;
 			}
 		});
 		refreshViewer(rootNode, Collections.singletonList(rootNode), Collections.<IOutlineNode> emptyList());
-		xtextDocument.addModelListener(this);
+		modelListener = new IXtextModelListener() {
+			public void modelChanged(XtextResource resource) {
+				try {
+					Job refreshJob = getRefreshJob();
+					refreshJob.cancel();
+					refreshJob.schedule();
+				} catch (Throwable t) {
+					LOG.error("Error refreshing outline", t);
+				}
+			}
+		};
+		xtextDocument.addModelListener(modelListener);
 	}
 
 	@Override
 	public void dispose() {
-		xtextDocument.removeModelListener(this);
+		xtextDocument.removeModelListener(modelListener);
 		super.dispose();
 	}
 
@@ -91,104 +180,26 @@ public class OutlinePage extends AbstractVirtualTreeContentOutlinePage implement
 
 	protected synchronized Job getRefreshJob() {
 		if (refreshJob == null) {
-			refreshJob = new Job("Refreshing outline") {
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					try {
-						System.out.println("Refreshing outline...");
-						List<IOutlineNode> expandedNodes = getExpandedNodes();
-						IOutlineNode rootNode = refreshOutlineModel(monitor, expandedNodes);
-						if (!monitor.isCanceled())
-							refreshViewer(rootNode, expandedNodes, Collections.<IOutlineNode> emptyList());
-						System.out.println("...done");
-						return Status.OK_STATUS;
-					} catch (Throwable t) {
-						return new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Error refreshing outline", t);
-					}
-				}
-			};
+			refreshJob = new RefreshJob();
 		}
 		return refreshJob;
 	}
 
-	protected IOutlineNode refreshOutlineModel(final IProgressMonitor monitor,
-			final List<IOutlineNode> nodesToBeExpanded) {
-		IOutlineNode rootNode = xtextDocument.readOnly(new IUnitOfWork<IOutlineNode, XtextResource>() {
-			public IOutlineNode exec(XtextResource resource) throws Exception {
-				IOutlineNode rootNode = treeProvider.createRoot(xtextDocument, resource);
-				List<IOutlineNode> createdNodes = Lists.newArrayList();
-				createdNodes.add(rootNode);
-				if (rootNode.hasChildren()) {
-					createdNodes.addAll(rootNode.getChildren());
-				}
-				for (Iterator<IOutlineNode> nodesToBeExpandedIter = nodesToBeExpanded.iterator(); 
-					nodesToBeExpandedIter.hasNext(); ) {
-					IOutlineNode nodeToBeExpanded = nodesToBeExpandedIter.next();
-					if (monitor.isCanceled())
-						return null;
-					int index = createdNodes.indexOf(nodeToBeExpanded);
-					if (index != -1) {
-						IOutlineNode newNode = createdNodes.get(index);
-						treeProvider.createChildren(newNode, resource);
-						createdNodes.addAll(newNode.getChildren());
-					} else {
-						nodesToBeExpandedIter.remove();
-					}
-				}
-				return rootNode;
-			}
-		});
-		return rootNode;
-	}
-
-	public void modelChanged(XtextResource resource) {
-		try {
-			Job refreshJob = getRefreshJob();
-			refreshJob.cancel();
-			refreshJob.schedule();
-		} catch (Throwable t) {
-			LOG.error("Error refreshing outline", t);
-		}
-	}
-
-	protected void refreshViewer(final IOutlineNode rootNode, final List<IOutlineNode> expandedNodes,
+	protected void refreshViewer(final IOutlineNode rootNode, final List<IOutlineNode> nodesToBeExpanded,
 			final List<IOutlineNode> selectedNodes) {
-		runInSWTThread(new Runnable() {
+		DisplayRunHelper.runAsyncInDisplayThread(new Runnable() {
 			public void run() {
 				try {
 					TreeViewer treeViewer = getTreeViewer();
 					treeViewer.setInput(rootNode);
-					treeViewer.setExpandedElements(Iterables.toArray(expandedNodes, IOutlineNode.class));
+					treeViewer.expandToLevel(1);
+					treeViewer.setExpandedElements(Iterables.toArray(nodesToBeExpanded, IOutlineNode.class));
 					treeViewer.setSelection(new StructuredSelection(selectedNodes));
 				} catch (Throwable t) {
 					LOG.error("Error refreshing outline", t);
 				}
 			}
 		});
-	}
-
-	protected List<IOutlineNode> getExpandedNodes() {
-		final List<IOutlineNode> expandedNodes = Lists.newArrayList();
-		runInSWTThread(new Runnable() {
-			public void run() {
-				Object[] expandedElements = getTreeViewer().getExpandedElements();
-				for (Object expandedElement : expandedElements) {
-					if (!(expandedElement instanceof IOutlineNode))
-						LOG.error("Content outline contains illegal node " + expandedElement);
-					else
-						expandedNodes.add((IOutlineNode) expandedElement);
-				}
-			}
-		});
-		return expandedNodes;
-	}
-
-	protected void runInSWTThread(Runnable runnable) {
-		if (Display.getCurrent() == null) {
-			Display.getDefault().asyncExec(runnable);
-		} else {
-			runnable.run();
-		}
 	}
 
 }

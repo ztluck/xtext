@@ -18,20 +18,15 @@ import org.eclipse.xtext.ui.editor.outline.IOutlineNode;
 public class DocumentNode extends AbstractOutlineNode {
 
 	private IXtextDocument document;
-	private Resource resource;
 
-	public DocumentNode(IXtextDocument document, Resource resource, IOutlineNode parent, Image image, String text) {
-		super(parent, image, text);
+	public DocumentNode(IXtextDocument document, Resource resource, IOutlineNode parent, Image image, String text, boolean hasChildren) {
+		super(parent, image, text, hasChildren);
 		this.document = document;
 	}
 
 	@Override
 	public IXtextDocument getDocument() {
 		return document;
-	}
-
-	public Resource internalGetResource() {
-		return resource;
 	}
 
 	@Override

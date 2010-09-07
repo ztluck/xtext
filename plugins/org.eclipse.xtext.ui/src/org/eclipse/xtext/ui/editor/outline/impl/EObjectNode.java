@@ -17,15 +17,12 @@ import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 public class EObjectNode extends AbstractOutlineNode {
 
-	private EObject eObject;
-
 	private URI eObjectURI;
 
 	private EClass eClass;
 
-	public EObjectNode(EObject eObject, IOutlineNode parent, Image image, Object text) {
-		super(parent, image, text);
-		this.eObject = eObject;
+	public EObjectNode(EObject eObject, IOutlineNode parent, Image image, Object text, boolean hasChildren) {
+		super(parent, image, text, hasChildren);
 		this.eObjectURI = EcoreUtil.getURI(eObject);
 		this.eClass = eObject.eClass();
 	}
@@ -36,10 +33,6 @@ public class EObjectNode extends AbstractOutlineNode {
 
 	public EClass getEClass() {
 		return eClass;
-	}
-
-	public EObject internalGetEObject() {
-		return eObject;
 	}
 
 	@Override
