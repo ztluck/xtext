@@ -8,6 +8,7 @@
 package org.eclipse.xtext.ui.editor;
 
 import java.util.List;
+import java.util.ListIterator;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonToken;
@@ -93,7 +94,7 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 	}
 
 	private List<TokenInfo> createTokenInfos(String string) {
-		List<TokenInfo> result = Lists.newArrayListWithExpectedSize(string.length() / 3);
+		List<TokenInfo> result = Lists.newLinkedList();
 		TokenSource source = createLexer(string);
 		CommonToken token = (CommonToken) source.nextToken();
 		while(token != Token.EOF_TOKEN) {
@@ -114,7 +115,7 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 		if (documentPartitioningChanged) {
 			previousEvent = null;
 			previousRegion = null;
-			tokenInfos = Lists.newArrayList();
+			tokenInfos = Lists.newLinkedList();
 			return partition;
 		}
 		if (previousEvent == e && previousRegion != null) {
@@ -178,15 +179,16 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 		regionLength -= tokenStartsAt;
 		regionOffset = tokenStartsAt;
 		
+		ListIterator<TokenInfo> tokenIt = tokenInfos.listIterator(tokenInfoIdx); 
+		
 		int lengthDiff = e.fText.length() - e.fLength;
 		// compute region length
 		while(true) {
-			if (token == Token.EOF_TOKEN || tokenInfoIdx >= tokenInfos.size())
+			if (token == Token.EOF_TOKEN || !tokenIt.hasNext())
 				break;
 			while(true) {
-				if (tokenInfoIdx >= tokenInfos.size())
-					break;
-				TokenInfo tokenInfo = tokenInfos.get(tokenInfoIdx);
+				if (!tokenIt.hasNext()) break;
+				TokenInfo tokenInfo = tokenIt.next();
 				if (token.getStartIndex() >= e.fOffset + e.fText.length()) {
 					if (tokenStartsAt + lengthDiff == token.getStartIndex() && 
 							tokenInfo.type == token.getType() && 
@@ -195,13 +197,15 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 					}
 				}
 				if (tokenStartsAt + lengthDiff + tokenInfo.length > token.getStopIndex() + 1)
+					/* This TokenInfo can never match the token anymore since this TokenInfo is located past the token's postion */ 
 					break;
-				tokenInfos.remove(tokenInfoIdx);
+				tokenIt.remove();
 				tokenStartsAt += tokenInfo.length;
 				if (tokenStartsAt + lengthDiff > token.getStartIndex())
 					break;
 			}
-			tokenInfos.add(tokenInfoIdx++, createTokenInfo(token));
+			tokenIt.add(createTokenInfo(token));
+			tokenInfoIdx++; 
 			token = (CommonToken) source.nextToken();
 		}
 		tokenInfos.subList(tokenInfoIdx, tokenInfos.size()).clear();
