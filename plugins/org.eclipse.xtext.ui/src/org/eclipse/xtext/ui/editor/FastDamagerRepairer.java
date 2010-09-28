@@ -195,7 +195,7 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 		int afterRegion = e.fOffset + e.fText.length();
 
 		tokenStartsAt += lengthDiff;
-		nextTokenStartsAt += lengthDiff; 
+		nextTokenStartsAt += lengthDiff;
 
 		LinkedList<TokenInfo> tokenInfosCopy = new LinkedList<TokenInfo>(tokenInfos);
 		assert tokenInfosCopy.equals(tokenInfos);
@@ -214,28 +214,25 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 				TokenInfo tokenInfoCopy = tokenInfosCopyIt.next();
 
 				if (token.getStartIndex() >= afterRegion) {
-					if (tokenStartsAt == token.getStartIndex()
-							&& !tokenCorrespondsToTokenInfo(token, tokenInfo)) {
+					if (tokenStartsAt == token.getStartIndex() && !tokenCorrespondsToTokenInfo(token, tokenInfo)) {
 						return new Region(regionOffset, token.getStartIndex() - regionOffset);
 					}
 				}
-				
-				nextTokenStartsAt = tokenStartsAt + tokenInfo.length; 
+
+				nextTokenStartsAt = tokenStartsAt + tokenInfo.length;
 				if (nextTokenStartsAt > token.getStopIndex() + 1)
 					break;
 				tokenInfos.remove(tokenInfoIdx);
 				tokenInfosCopyIt.remove();
 				removed = true;
 
-				tokenStartsAt = nextTokenStartsAt; 
+				tokenStartsAt = nextTokenStartsAt;
 				if (tokenStartsAt > token.getStartIndex())
 					break;
 			}
 			TokenInfo tokenInfoToAdd = createTokenInfo(token);
 
 			tokenInfos.add(tokenInfoIdx++, tokenInfoToAdd);
-
-			//			assert tokenInfosCopyIt.hasPrevious();
 
 			if (removed) {
 				tokenInfosCopyIt.add(tokenInfoToAdd);
@@ -247,16 +244,13 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 			token = (CommonToken) source.nextToken();
 		}
 		tokenInfos.subList(tokenInfoIdx, tokenInfos.size()).clear();
-		tokenInfosCopy.subList(tokenInfoIdx, tokenInfosCopy.size()).clear();
 
 		// add subsequent tokens
 
-		if (tokenInfoIdx >= tokenInfos.size()) {
-			while (token != Token.EOF_TOKEN) {
-				tokenInfos.add(createTokenInfo(token));
-				tokenInfosCopy.add(createTokenInfo(token));
-				token = (CommonToken) source.nextToken();
-			}
+		while (token != Token.EOF_TOKEN) {
+			tokenInfos.add(createTokenInfo(token));
+			tokenInfosCopy.add(createTokenInfo(token));
+			token = (CommonToken) source.nextToken();
 		}
 
 		return new Region(regionOffset, regionLength);
