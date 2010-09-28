@@ -197,20 +197,18 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 		tokenStartsAt += lengthDiff;
 		nextTokenStartsAt += lengthDiff;
 
-		LinkedList<TokenInfo> tokenInfosCopy = new LinkedList<TokenInfo>(tokenInfos);
-		assert tokenInfosCopy.equals(tokenInfos);
-		ListIterator<TokenInfo> tokenInfosCopyIt = tokenInfosCopy.listIterator(tokenInfoIdx);
+		tokenInfosIt = tokenInfos.listIterator(tokenInfoIdx);
 
 		// compute region length
 		while (true) {
 			boolean removed = false;
 
-			if (token == Token.EOF_TOKEN || !tokenInfosCopyIt.hasNext())
+			if (token == Token.EOF_TOKEN || !tokenInfosIt.hasNext())
 				break;
 			while (true) {
-				if (!tokenInfosCopyIt.hasNext())
+				if (!tokenInfosIt.hasNext())
 					break;
-				tokenInfo = tokenInfosCopyIt.next();
+				tokenInfo = tokenInfosIt.next();
 
 				if (token.getStartIndex() >= afterRegion) {
 					if (tokenStartsAt == token.getStartIndex() && !tokenCorrespondsToTokenInfo(token, tokenInfo)) {
@@ -221,8 +219,7 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 				nextTokenStartsAt = tokenStartsAt + tokenInfo.length;
 				if (nextTokenStartsAt > token.getStopIndex() + 1)
 					break;
-				tokenInfos.remove(tokenInfoIdx);
-				tokenInfosCopyIt.remove();
+				tokenInfosIt.remove();
 				removed = true;
 
 				tokenStartsAt = nextTokenStartsAt;
@@ -230,14 +227,13 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 					break;
 			}
 			TokenInfo tokenInfoToAdd = createTokenInfo(token);
-
-			tokenInfos.add(tokenInfoIdx++, tokenInfoToAdd);
+			tokenInfoIdx++; 
 
 			if (removed) {
-				tokenInfosCopyIt.add(tokenInfoToAdd);
+				tokenInfosIt.add(tokenInfoToAdd);
 			} else {
-				tokenInfosCopyIt.previous();
-				tokenInfosCopyIt.add(tokenInfoToAdd);
+				tokenInfosIt.previous();
+				tokenInfosIt.add(tokenInfoToAdd);
 			}
 
 			token = (CommonToken) source.nextToken();
