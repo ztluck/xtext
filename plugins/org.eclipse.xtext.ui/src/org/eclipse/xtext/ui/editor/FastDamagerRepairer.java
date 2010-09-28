@@ -226,7 +226,9 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 						return new Region(regionOffset, token.getStartIndex() - regionOffset);
 					}
 				}
-				if (tokenStartsAt + tokenInfo.length > token.getStopIndex() + 1)
+				
+				nextTokenStartsAt = tokenStartsAt + tokenInfo.length; 
+				if (nextTokenStartsAt > token.getStopIndex() + 1)
 					break;
 				tokenInfos.remove(tokenInfoIdx);
 				tokenInfosCopyIt.remove();
@@ -234,7 +236,7 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 
 				assert tokenInfosCopy.equals(tokenInfos);
 
-				tokenStartsAt += tokenInfo.length;
+				tokenStartsAt = nextTokenStartsAt; 
 				if (tokenStartsAt > token.getStartIndex())
 					break;
 			}
