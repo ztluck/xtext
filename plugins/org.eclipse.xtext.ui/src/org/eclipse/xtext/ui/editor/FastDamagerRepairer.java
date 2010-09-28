@@ -204,25 +204,18 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 		// compute region length
 		while (true) {
 			boolean removed = false;
-			assert (tokenInfoIdx >= tokenInfos.size()) == !tokenInfosCopyIt.hasNext();
 
 			if (token == Token.EOF_TOKEN || tokenInfoIdx >= tokenInfos.size())
 				break;
 			while (true) {
-				assert (tokenInfoIdx >= tokenInfos.size()) == !tokenInfosCopyIt.hasNext();
-				assert tokenInfosCopy.equals(tokenInfos);
-
 				if (tokenInfoIdx >= tokenInfos.size())
 					break;
 				tokenInfo = tokenInfos.get(tokenInfoIdx);
 				TokenInfo tokenInfoCopy = tokenInfosCopyIt.next();
 
-				assert tokenInfo == tokenInfoCopy;
-
 				if (token.getStartIndex() >= afterRegion) {
 					if (tokenStartsAt == token.getStartIndex()
 							&& !tokenCorrespondsToTokenInfo(token, tokenInfo)) {
-						assert tokenInfosCopy.equals(tokenInfos);
 						return new Region(regionOffset, token.getStartIndex() - regionOffset);
 					}
 				}
@@ -234,15 +227,11 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 				tokenInfosCopyIt.remove();
 				removed = true;
 
-				assert tokenInfosCopy.equals(tokenInfos);
-
 				tokenStartsAt = nextTokenStartsAt; 
 				if (tokenStartsAt > token.getStartIndex())
 					break;
 			}
 			TokenInfo tokenInfoToAdd = createTokenInfo(token);
-
-			assert tokenInfosCopy.equals(tokenInfos);
 
 			tokenInfos.add(tokenInfoIdx++, tokenInfoToAdd);
 
@@ -255,14 +244,10 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 				tokenInfosCopyIt.add(tokenInfoToAdd);
 			}
 
-			assert tokenInfosCopy.equals(tokenInfos);
-
 			token = (CommonToken) source.nextToken();
 		}
 		tokenInfos.subList(tokenInfoIdx, tokenInfos.size()).clear();
 		tokenInfosCopy.subList(tokenInfoIdx, tokenInfosCopy.size()).clear();
-
-		assert tokenInfosCopy.equals(tokenInfos);
 
 		// add subsequent tokens
 
@@ -274,7 +259,6 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 			}
 		}
 
-		assert tokenInfosCopy.equals(tokenInfos);
 		return new Region(regionOffset, regionLength);
 	}
 
