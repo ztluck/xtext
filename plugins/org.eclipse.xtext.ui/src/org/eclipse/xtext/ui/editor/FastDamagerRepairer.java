@@ -210,8 +210,7 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 			while (true) {
 				if (!tokenInfosCopyIt.hasNext())
 					break;
-				tokenInfo = tokenInfos.get(tokenInfoIdx);
-				TokenInfo tokenInfoCopy = tokenInfosCopyIt.next();
+				tokenInfo = tokenInfosCopyIt.next();
 
 				if (token.getStartIndex() >= afterRegion) {
 					if (tokenStartsAt == token.getStartIndex() && !tokenCorrespondsToTokenInfo(token, tokenInfo)) {
