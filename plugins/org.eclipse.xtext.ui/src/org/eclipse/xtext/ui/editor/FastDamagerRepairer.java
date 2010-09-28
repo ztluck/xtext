@@ -192,7 +192,10 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 		int regionOffset = tokenStartsAt;
 		int regionLength = e.fDocument.getLength() - tokenStartsAt;
 		int lengthDiff = e.fText.length() - e.fLength;
-		tokenStartsAt += lengthDiff; 
+		int afterRegion = e.fOffset + e.fText.length();
+
+		tokenStartsAt += lengthDiff;
+		nextTokenStartsAt += lengthDiff; 
 
 		LinkedList<TokenInfo> tokenInfosCopy = new LinkedList<TokenInfo>(tokenInfos);
 		assert tokenInfosCopy.equals(tokenInfos);
@@ -216,7 +219,7 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 
 				assert tokenInfo == tokenInfoCopy;
 
-				if (token.getStartIndex() >= e.fOffset + e.fText.length()) {
+				if (token.getStartIndex() >= afterRegion) {
 					if (tokenStartsAt == token.getStartIndex()
 							&& !tokenCorrespondsToTokenInfo(token, tokenInfo)) {
 						assert tokenInfosCopy.equals(tokenInfos);
