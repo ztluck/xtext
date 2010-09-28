@@ -154,15 +154,14 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 		}
 
 		int tokenStartsAt = 0;
+		int nextTokenStartsAt = 0; 
 		int tokenInfoIdx = 0;
-		int regionOffset = 0;
-		int regionLength = e.fDocument.getLength();
 
 		TokenSource source = createLexer(e.fDocument.get());
 		CommonToken token = (CommonToken) source.nextToken();
 
 		ListIterator<TokenInfo> tokenInfosIt = tokenInfos.listIterator();
-		TokenInfo tokenInfo = tokenInfosIt.next();
+		TokenInfo tokenInfo = null;
 
 		// find start idx
 		while (true) {
@@ -176,20 +175,21 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 
 			tokenInfo = tokenInfosIt.next();
 
-			if (tokenInfo.type != token.getType() || getTokenLength(token) != tokenInfo.length)
+			if (tokenCorrespondsToTokenInfo(token, tokenInfo))
 				break;
 			
-			if (tokenStartsAt + tokenInfo.length > e.fOffset)
+			nextTokenStartsAt = tokenStartsAt + tokenInfo.length; 
+			
+			if (nextTokenStartsAt > e.fOffset)
 				break;
-
+			
 			tokenInfoIdx++;
-			tokenStartsAt += tokenInfo.length;
+			tokenStartsAt = nextTokenStartsAt; 
 			token = (CommonToken) source.nextToken();
 		}
 
-		regionLength -= tokenStartsAt;
-		regionOffset = tokenStartsAt;
-
+		int regionOffset = tokenStartsAt;
+		int regionLength = e.fDocument.getLength() - tokenStartsAt;
 		int lengthDiff = e.fText.length() - e.fLength;
 
 		LinkedList<TokenInfo> tokenInfosCopy = new LinkedList<TokenInfo>(tokenInfos);
@@ -215,8 +215,7 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 				assert tokenInfo == tokenInfoCopy;
 
 				if (token.getStartIndex() >= e.fOffset + e.fText.length()) {
-					if (tokenStartsAt + lengthDiff == token.getStartIndex() && tokenInfo.type == token.getType()
-							&& getTokenLength(token) == tokenInfo.length) {
+					if (tokenStartsAt + lengthDiff == token.getStartIndex() && tokenCorrespondsToTokenInfo(token, tokenInfo)) {
 						assert tokenInfosCopy.equals(tokenInfos);
 						return new Region(regionOffset, token.getStartIndex() - regionOffset);
 					}
@@ -269,6 +268,10 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 
 		assert tokenInfosCopy.equals(tokenInfos);
 		return new Region(regionOffset, regionLength);
+	}
+
+	private boolean tokenCorrespondsToTokenInfo(CommonToken token, TokenInfo tokenInfo) {
+		return tokenInfo.type != token.getType() || getTokenLength(token) != tokenInfo.length;
 	}
 
 	private int getTokenLength(CommonToken token) {
