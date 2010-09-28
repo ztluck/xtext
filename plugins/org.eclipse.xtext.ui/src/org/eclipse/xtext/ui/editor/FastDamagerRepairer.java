@@ -161,24 +161,32 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 		TokenSource source = createLexer(e.fDocument.get());
 		CommonToken token = (CommonToken) source.nextToken();
 
+		ListIterator<TokenInfo> tokenInfosIt = tokenInfos.listIterator();
+		TokenInfo tokenInfo = tokenInfosIt.next();
+
 		// find start idx
 		while (true) {
 			if (token == Token.EOF_TOKEN) {
 				tokenInfos.subList(tokenInfoIdx, tokenInfos.size()).clear();
 				break;
 			}
-			if (tokenInfoIdx >= tokenInfos.size())
+
+			if (!tokenInfosIt.hasNext())
 				break;
-			TokenInfo tokenInfo = tokenInfos.get(tokenInfoIdx);
-			if (tokenInfo.type != token.getType()
-					|| token.getStopIndex() - token.getStartIndex() + 1 != tokenInfo.length)
+
+			tokenInfo = tokenInfosIt.next();
+
+			if (tokenInfo.type != token.getType() || getTokenLength(token) != tokenInfo.length)
 				break;
+			
 			if (tokenStartsAt + tokenInfo.length > e.fOffset)
 				break;
-			tokenStartsAt += tokenInfo.length;
+
 			tokenInfoIdx++;
+			tokenStartsAt += tokenInfo.length;
 			token = (CommonToken) source.nextToken();
 		}
+
 		regionLength -= tokenStartsAt;
 		regionOffset = tokenStartsAt;
 
@@ -201,14 +209,14 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 
 				if (tokenInfoIdx >= tokenInfos.size())
 					break;
-				TokenInfo tokenInfo = tokenInfos.get(tokenInfoIdx);
+				tokenInfo = tokenInfos.get(tokenInfoIdx);
 				TokenInfo tokenInfoCopy = tokenInfosCopyIt.next();
 
 				assert tokenInfo == tokenInfoCopy;
 
 				if (token.getStartIndex() >= e.fOffset + e.fText.length()) {
 					if (tokenStartsAt + lengthDiff == token.getStartIndex() && tokenInfo.type == token.getType()
-							&& token.getStopIndex() - token.getStartIndex() + 1 == tokenInfo.length) {
+							&& getTokenLength(token) == tokenInfo.length) {
 						assert tokenInfosCopy.equals(tokenInfos);
 						return new Region(regionOffset, token.getStartIndex() - regionOffset);
 					}
@@ -258,9 +266,13 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 				token = (CommonToken) source.nextToken();
 			}
 		}
-		
+
 		assert tokenInfosCopy.equals(tokenInfos);
 		return new Region(regionOffset, regionLength);
+	}
+
+	private int getTokenLength(CommonToken token) {
+		return token.getStopIndex() - token.getStartIndex() + 1;
 	}
 
 	protected Lexer createLexer(String string) {
