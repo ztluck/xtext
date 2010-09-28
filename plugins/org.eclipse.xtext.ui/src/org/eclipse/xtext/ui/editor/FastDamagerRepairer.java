@@ -205,10 +205,10 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 		while (true) {
 			boolean removed = false;
 
-			if (token == Token.EOF_TOKEN || tokenInfoIdx >= tokenInfos.size())
+			if (token == Token.EOF_TOKEN || !tokenInfosCopyIt.hasNext())
 				break;
 			while (true) {
-				if (tokenInfoIdx >= tokenInfos.size())
+				if (!tokenInfosCopyIt.hasNext())
 					break;
 				tokenInfo = tokenInfos.get(tokenInfoIdx);
 				TokenInfo tokenInfoCopy = tokenInfosCopyIt.next();
