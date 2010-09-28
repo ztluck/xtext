@@ -75,7 +75,7 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 		}
 	}
 
-	private boolean checkInvariant = false;
+	private boolean checkInvariant = true;
 	private List<TokenInfo> tokenInfos;
 	private IRegion previousRegion;
 	private DocumentEvent previousEvent;
@@ -209,6 +209,7 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 				if (token.getStartIndex() >= e.fOffset + e.fText.length()) {
 					if (tokenStartsAt + lengthDiff == token.getStartIndex() && tokenInfo.type == token.getType()
 							&& token.getStopIndex() - token.getStartIndex() + 1 == tokenInfo.length) {
+						assert tokenInfosCopy.equals(tokenInfos);
 						return new Region(regionOffset, token.getStartIndex() - regionOffset);
 					}
 				}
@@ -257,6 +258,8 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 				token = (CommonToken) source.nextToken();
 			}
 		}
+		
+		assert tokenInfosCopy.equals(tokenInfos);
 		return new Region(regionOffset, regionLength);
 	}
 
