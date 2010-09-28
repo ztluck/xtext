@@ -249,7 +249,6 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 
 		while (token != Token.EOF_TOKEN) {
 			tokenInfos.add(createTokenInfo(token));
-			tokenInfosCopy.add(createTokenInfo(token));
 			token = (CommonToken) source.nextToken();
 		}
 
