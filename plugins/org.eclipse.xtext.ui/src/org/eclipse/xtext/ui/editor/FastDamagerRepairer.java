@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eclipse.xtext.ui.editor;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -31,6 +30,7 @@ import com.google.inject.name.Named;
 
 /**
  * @author Sebastian Zarnekow - Initial contribution and API
+ * @author Mark Christiaens, Sigasi N.V. - Execution speed improvements
  */
 public class FastDamagerRepairer extends AbstractDamagerRepairer {
 
@@ -75,7 +75,7 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 		}
 	}
 
-	private boolean checkInvariant = true;
+	private boolean checkInvariant = false;
 	private List<TokenInfo> tokenInfos;
 	private IRegion previousRegion;
 	private DocumentEvent previousEvent;
@@ -163,8 +163,6 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 
 		int tokenInfoStart = -1;
 		int nextTokenInfoStart = 0;
-
-		assert tokenInfos.get(tokenInfos.size() - 1).type == Token.EOF;
 
 		TokenSource source = createLexer(e.fDocument.get());
 		CommonToken token = null;
