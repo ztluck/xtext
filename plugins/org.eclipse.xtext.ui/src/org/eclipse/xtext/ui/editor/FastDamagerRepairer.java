@@ -40,7 +40,7 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 		private final int type;
 
 		private TokenInfo(CommonToken token) {
-			length = token.getStopIndex() - token.getStartIndex() + 1;
+			length = getTokenLength(token);
 			type = token.getType();
 		}
 
@@ -97,12 +97,15 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 	private List<TokenInfo> createTokenInfos(String string) {
 		List<TokenInfo> result = Lists.newLinkedList();
 		TokenSource source = createLexer(string);
-		CommonToken token = (CommonToken) source.nextToken();
-		while (token != Token.EOF_TOKEN) {
+
+		CommonToken token = null;
+
+		do {
+			token = (CommonToken) source.nextToken();
 			TokenInfo info = createTokenInfo(token);
 			result.add(info);
-			token = (CommonToken) source.nextToken();
-		}
+		} while (token != Token.EOF_TOKEN);
+
 		return result;
 	}
 
@@ -152,131 +155,170 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 			tokenInfos = createTokenInfos(e.fDocument.get());
 			return new Region(0, e.getDocument().getLength());
 		}
-		
-		/* If nothing is changed, return the empty region */ 
-		if (e.getLength() == 0 && e.getText().length() == 0)
-		{
+
+		/* If nothing is changed, return the empty region */
+		if (e.getLength() == 0 && e.getText().length() == 0) {
 			return new Region(0, 0);
 		}
 
-		int tokenStartsAt = 0;
-		int nextTokenStartsAt = 0;
-		int tokenInfoIdx = 0;
+		int tokenInfoStart = -1;
+		int nextTokenInfoStart = 0;
+
+		assert tokenInfos.get(tokenInfos.size() - 1).type == Token.EOF;
 
 		TokenSource source = createLexer(e.fDocument.get());
-		CommonToken token = (CommonToken) source.nextToken();
+		CommonToken token = null;
 
 		ListIterator<TokenInfo> tokenInfosIt = tokenInfos.listIterator();
 		TokenInfo tokenInfo = null;
 
-		// find start idx
+		/* At the end of this loop, we want to have found the first 
+		 * token (if any) that does not correspond with the previous time we lexed or
+		 * that lies within the modified region.  */
+
 		while (true) {
-			if (token == Token.EOF_TOKEN) {
-				removeTillEnd(tokenInfosIt);
-				break;
-			}
-
-			if (tokenInfosIt.hasNext()) {
-				tokenInfo = tokenInfosIt.next();
-			} else {
-				break;
-			}
-
-			if (!tokenCorrespondsToTokenInfo(token, tokenInfo))
-				break;
-
-			nextTokenStartsAt = tokenStartsAt + tokenInfo.length;
-
-			if (nextTokenStartsAt >= e.fOffset)
-				break;
-
-			tokenInfoIdx++;
-			tokenStartsAt = nextTokenStartsAt;
 			token = (CommonToken) source.nextToken();
-		}
 
-		int regionOffset = tokenStartsAt;
-		int regionLength = e.fDocument.getLength() - tokenStartsAt;
+			/* Note: there is always a EOF TokenInfo at the end of the list.  If we run
+			 * into that then either the lexer will also have returned a EOF or not.
+			 * If so then the loop will be ended at the bottom.  If not, the loop
+			 * will be ended due to a mismatch.	 Therefore, we can safely fetch a
+			 * tokenInfo without "hasNext". */
+			tokenInfo = tokenInfosIt.next();
+
+			tokenInfoStart = nextTokenInfoStart;
+			nextTokenInfoStart = tokenInfoStart + tokenInfo.length;
+			boolean inModifiedRegion = tokenInfoStart >= e.fOffset;
+
+			if (!tokenCorrespondsToTokenInfo(token, tokenInfo, inModifiedRegion)) {
+				/* Mismatch */
+				break;
+			}
+
+			if (token.getType() == Token.EOF) {
+				/* Perfect match all the way to the end of the file without running into the modified region. */
+				return new Region(0, 0);
+			}
+		}
+		
+		/* At this point tokenInfo and token are the first mismatch.  
+		 * tokenInfosIt points to the next mismatch (if any). */ 
+
+		int regionOffset = tokenInfoStart;
 		int lengthDiff = e.fText.length() - e.fLength;
 		int afterRegion = e.fOffset + e.fText.length();
 
-		tokenStartsAt += lengthDiff;
-		nextTokenStartsAt += lengthDiff;
+		/* We have to shift the accounting for the position of the tokens we've seen because
+		 * we will be comparing them with the position of tokens _after_ the modified region. 
+		 * We have to take the size of the new text into account. */
+		
+		tokenInfoStart += lengthDiff;
+		nextTokenInfoStart += lengthDiff;
+		
+		/* Drop all the TokenInfos that are (partially) in or before the modified region. */
+		while (tokenInfo.type != Token.EOF && tokenInfoStart < afterRegion) {
+			tokenInfosIt.remove();
 
-//		int j = tokenInfosIt.nextIndex(); 
-		tokenInfosIt.previous(); 
-//		tokenInfosIt = tokenInfos.listIterator(tokenInfoIdx);
+			tokenInfo = tokenInfosIt.next();
+			tokenInfoStart = nextTokenInfoStart;
+			nextTokenInfoStart = tokenInfoStart + tokenInfo.length;
+		}
+		
+		tokenInfosIt.previous();
+		
+		/* At this point tokenInfosIt.next will produce the first TokenInfo that comes
+		 * from after the modified region.  tokenInfosIt.prev should produce the last matched 
+		 * TokenInfo before the region (if it exists).
+		 * 
+		 * tokenInfo is the first TokenInfo that is located completely after the modified region. 
+		 */
 
-		// compute region length
-		while (true) {
-			boolean removed = false;
-
-			if (token == Token.EOF_TOKEN || !tokenInfosIt.hasNext())
-				break;
+		/* Parse all the tokens that are partially in or before the modified region. */
+		while (token.getType() != Token.EOF && token.getStartIndex() < afterRegion) {
+			tokenInfosIt.add(createTokenInfo(token));
+			token = (CommonToken) source.nextToken();
+		}
+		
+		/* At this point token is the first token located after the modified region */ 
+		
+		tokenInfosIt.next (); 
+		
+		/* At this point tokenInfosIt.next () will produce the second TokenInfo that comes
+		 * after the modified region. 
+		 * 
+		 * token points to the first token completely located after the modified region. */
+		
+		/* Now we try to find a matching Token/TokenInfo pair located after the changed region.  */
+		while (token != Token.EOF_TOKEN && tokenInfo.type != Token.EOF) {
+			/* This loop removes all the TokenInfos that do not match 
+			 * with the current or any subsequent Token and returns from the function 
+			 * if a match is found */
 			while (true) {
-				if (tokenInfosIt.hasNext()) {
-					tokenInfo = tokenInfosIt.next();
-				} else {
+				if (tokenInfoStart > token.getStopIndex() || tokenInfo.type == Token.EOF) {
+					/* We've rejected matching as many TokenInfos as we could on the basis
+					 * of the current Token.  Go to next Token. */
 					break;
-				}
-
-				if (token.getStartIndex() >= afterRegion) {
-					if (tokenStartsAt == token.getStartIndex() && tokenCorrespondsToTokenInfo(token, tokenInfo)) {
+				} else {
+					if (tokenInfoStart == token.getStartIndex() && tokenCorrespondsToTokenInfo(token, tokenInfo, false)) {
+						/* Match */ 
 						return new Region(regionOffset, token.getStartIndex() - regionOffset);
 					}
+					else 
+					{
+						/* Mismatch */
+						tokenInfosIt.remove();
+						tokenInfo = tokenInfosIt.next();
+						tokenInfoStart = nextTokenInfoStart;
+						nextTokenInfoStart = tokenInfoStart + tokenInfo.length;
+					}
 				}
-
-				nextTokenStartsAt = tokenStartsAt + tokenInfo.length;
-				if (nextTokenStartsAt > token.getStopIndex() + 1)
-					break;
-				tokenInfosIt.remove();
-				removed = true;
-
-				tokenStartsAt = nextTokenStartsAt;
-				if (tokenStartsAt > token.getStartIndex())
-					break;
 			}
+
+			/* After this loop, tokenInfo points to EOF or to a TokenInfo that 
+			 * is positioned strictly after the current Token.  The current Token didn't
+			 * match the TokenInfos so it must replace the TokenInfos that were removed. */
+
 			TokenInfo tokenInfoToAdd = createTokenInfo(token);
-			tokenInfoIdx++;
-
-			if (removed) {
-				tokenInfosIt.add(tokenInfoToAdd);
-			} else {
-				tokenInfosIt.previous();
-				tokenInfosIt.add(tokenInfoToAdd);
-			}
+			tokenInfosIt.previous();
+			tokenInfosIt.add(tokenInfoToAdd);
+			tokenInfosIt.next (); 
+			
+			/* At this point tokenInfosIt.next () is again the TokenInfo 
+			 * after the current tokenInfo value. */  
 
 			token = (CommonToken) source.nextToken();
 		}
 
-		int size = tokenInfos.size (); 
-		int nextIndex = tokenInfosIt.nextIndex(); 
-		
-		tokenInfos.subList(nextIndex, size).clear();
+		/* At this point, we either ran out of TokenInfos or Tokens without actually finding a match. */
 
-		// add subsequent tokens
+		if (tokenInfo.type == Token.EOF) {
+			/* If we ran out of TokenInfos then we have to drop the EOF 
+			 * TokenInfo and append the remaining converted Tokens. */
 
-		while (token != Token.EOF_TOKEN) {
-			tokenInfos.add(createTokenInfo(token));
-			token = (CommonToken) source.nextToken();
-		}
-
-		return new Region(regionOffset, regionLength);
-	}
-
-	private void removeTillEnd(ListIterator<TokenInfo> tokenInfosIt) {
-		tokenInfosIt.remove();
-		while (tokenInfosIt.hasNext()) {
-			tokenInfosIt.next();
 			tokenInfosIt.remove();
+			tokenInfosIt.add(createTokenInfo(token));
+			while (token.getType() != Token.EOF) {
+				token = (CommonToken) source.nextToken();
+				tokenInfosIt.add(createTokenInfo(token));
+			}
+		} else {
+			/* If we ran out of Tokens then we have to remove any 
+			 * remaining TokenInfos and append EOF. */
+			int size = tokenInfos.size();
+			int nextIndex = tokenInfosIt.nextIndex();
+			tokenInfos.subList(nextIndex - 1, size).clear();
+			tokenInfos.add(createTokenInfo(token));
 		}
+
+		/* Region begins at the first mismatch all the way to the end of the document. */ 
+		return new Region(regionOffset, e.fDocument.getLength() - regionOffset);
 	}
 
-	private boolean tokenCorrespondsToTokenInfo(CommonToken token, TokenInfo tokenInfo) {
-		return tokenInfo.type == token.getType() && getTokenLength(token) == tokenInfo.length;
+	private boolean tokenCorrespondsToTokenInfo(CommonToken token, TokenInfo tokenInfo, boolean inModifiedRegion) {
+		return !inModifiedRegion && tokenInfo.type == token.getType() && getTokenLength(token) == tokenInfo.length;
 	}
 
-	private int getTokenLength(CommonToken token) {
+	private static int getTokenLength(CommonToken token) {
 		return token.getStopIndex() - token.getStartIndex() + 1;
 	}
 
