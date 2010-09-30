@@ -188,7 +188,7 @@ public class FastDamagerRepairer extends AbstractDamagerRepairer {
 
 			tokenInfoStart = nextTokenInfoStart;
 			nextTokenInfoStart = tokenInfoStart + tokenInfo.length;
-			boolean inModifiedRegion = tokenInfoStart >= e.fOffset;
+			boolean inModifiedRegion = nextTokenInfoStart > e.fOffset;
 
 			if (!tokenCorrespondsToTokenInfo(token, tokenInfo, inModifiedRegion)) {
 				/* Mismatch */
