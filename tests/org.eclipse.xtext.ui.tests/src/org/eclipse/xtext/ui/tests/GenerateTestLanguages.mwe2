@@ -138,6 +138,10 @@ Workflow {
 			fragment = @TestLanguagesFragments {}
 		}
 		language = { 
+			uri="classpath:/org/eclipse/xtext/ui/tests/editor/outline/Bug326937TestLanguage.xtext"
+			fragment = @TestLanguagesFragments {}
+		}
+		language = { 
 			uri="classpath:/org/eclipse/xtext/ui/tests/enumrules/EnumRulesUiTestLanguage.xtext"
 			fragment = @TestLanguagesFragments {
 				genModels = "platform:/resource/org.eclipse.xtext.ui.tests/src/org/eclipse/xtext/ui/tests/enumrules/enumsUi.genmodel"
