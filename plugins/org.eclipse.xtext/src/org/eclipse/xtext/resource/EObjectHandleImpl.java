@@ -8,6 +8,7 @@
 package org.eclipse.xtext.resource;
 
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.resource.XtextResource;
@@ -20,12 +21,14 @@ public class EObjectHandleImpl<P extends EObject> implements IEObjectHandle<P> {
 	private P internal;
 	private IStateAccess<XtextResource> resourceAccess;
 	private URI uri;
+	private EClass eClass;
 
 	public URI getURI() {
 		return uri;
 	}
 
 	public EObjectHandleImpl(P internal, IStateAccess<XtextResource> resourceAccess) {
+		this.eClass = internal.eClass();
 		this.internal = internal;
 		this.resourceAccess = resourceAccess;
 		this.uri = EcoreUtil.getURI(internal);
@@ -54,6 +57,8 @@ public class EObjectHandleImpl<P extends EObject> implements IEObjectHandle<P> {
 			if (obj.eResource() != resource) {
 				obj = (P) resource.getEObject(uri.fragment());
 			}
+			if(eClass != obj.eClass())
+				return null;
 			return work.exec(obj);
 		}
 	}

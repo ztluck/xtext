@@ -431,6 +431,7 @@ public class XtextContentOutlinePage extends ContentOutlinePage implements ISour
 					IDocument document = sourceViewer.getDocument();
 					internalSetInput(XtextDocumentUtil.get(document), false);
 					tv.refresh();
+					synchronizeOutlinePage();
 				}
 			}
 		});
