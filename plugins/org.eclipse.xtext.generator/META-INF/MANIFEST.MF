@@ -61,4 +61,5 @@ Require-Bundle: org.eclipse.xtext.util;bundle-version="1.0.1";resolution:=option
  org.antlr.runtime
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
-Import-Package: org.apache.log4j;version="1.2.15"
+Import-Package: org.apache.commons.logging;version="1.0.4",
+ org.apache.log4j;version="1.2.15"

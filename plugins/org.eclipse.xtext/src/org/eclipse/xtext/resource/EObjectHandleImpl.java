@@ -57,8 +57,8 @@ public class EObjectHandleImpl<P extends EObject> implements IEObjectHandle<P> {
 			if (obj.eResource() != resource) {
 				obj = (P) resource.getEObject(uri.fragment());
 			}
-			if(eClass != obj.eClass())
-				return null;
+			if(obj != null && eClass != obj.eClass())
+				obj = null;
 			return work.exec(obj);
 		}
 	}
