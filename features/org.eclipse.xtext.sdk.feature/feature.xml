@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.xtext.sdk"
       label="%featureName"
-      version="1.0.1.qualifier"
+      version="1.0.2.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.xtext"
       image="modeling32.png">
@@ -20,7 +20,9 @@ v1.0 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/epl-v10.html Description here.
    </copyright>
 
-   <license url="http://www.eclipse.org/legal/epl-v10.html">%license</license>
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      %license
+   </license>
 
    <url>
       <update label="%updateSiteName" url="http://download.eclipse.org/modeling/tmf/updates/"/>

@@ -20,7 +20,7 @@ var classSplitting = true
 Workflow {
 	
 	bean = StandaloneSetup {
-		platformUri = "${runtimeProject}/.."
+		platformUri = "${runtimeProject}/../.."
 	}
 	
 	component = DirectoryCleaner {
