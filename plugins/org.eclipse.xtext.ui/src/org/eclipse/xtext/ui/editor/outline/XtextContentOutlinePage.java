@@ -275,8 +275,10 @@ public class XtextContentOutlinePage extends ContentOutlinePage implements ISour
 
 	public void setSourceViewer(ISourceViewer sourceViewer) {
 		this.sourceViewer = sourceViewer;
-		getOutlineSelectionListener().install(this);
-		getEditorSelectionChangedListener().install(sourceViewer.getSelectionProvider());
+		if (sourceViewer != null) {
+			getOutlineSelectionListener().install(this);
+			getEditorSelectionChangedListener().install(sourceViewer.getSelectionProvider());
+		}
 	}
 
 	public ISourceViewer getSourceViewer() {
