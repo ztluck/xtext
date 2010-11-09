@@ -637,6 +637,8 @@ public abstract class AbstractInternalAntlrParser extends Parser {
 
 	public void setUnorderedGroupHelper(IUnorderedGroupHelper unorderedGroupHelper) {
 		this.unorderedGroupHelper = unorderedGroupHelper;
+		if (unorderedGroupHelper instanceof UnorderedGroupHelper)
+			((UnorderedGroupHelper) unorderedGroupHelper).initializeWith(this);
 	}
 
 	public IUnorderedGroupHelper getUnorderedGroupHelper() {

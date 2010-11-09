@@ -28,6 +28,7 @@ import org.eclipse.xtext.TerminalRule;
 import org.eclipse.xtext.UnorderedGroup;
 import org.eclipse.xtext.parser.antlr.ITokenDefProvider;
 import org.eclipse.xtext.parser.antlr.IUnorderedGroupHelper;
+import org.eclipse.xtext.parser.antlr.UnorderedGroupHelper;
 import org.eclipse.xtext.ui.editor.contentassist.antlr.FollowElement;
 import org.eclipse.xtext.ui.editor.contentassist.antlr.LookAheadTerminal;
 import org.eclipse.xtext.ui.editor.contentassist.antlr.LookAheadTerminalRuleCall;
@@ -473,6 +474,8 @@ public abstract class AbstractInternalContentAssistParser extends Parser impleme
 
 	public void setUnorderedGroupHelper(IUnorderedGroupHelper unorderedGroupHelper) {
 		this.unorderedGroupHelper = unorderedGroupHelper;
+		if (unorderedGroupHelper instanceof UnorderedGroupHelper)
+			((UnorderedGroupHelper) unorderedGroupHelper).initializeWith(this);
 	}
 
 	public IUnorderedGroupHelper getUnorderedGroupHelper() {
