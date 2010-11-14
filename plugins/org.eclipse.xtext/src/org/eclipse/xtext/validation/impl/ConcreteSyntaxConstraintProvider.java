@@ -353,6 +353,8 @@ public class ConcreteSyntaxConstraintProvider implements IConcreteSyntaxConstrai
 							return createElement(ConstraintType.GROUP, ele, c, e, semanticType, multiple, optional);
 						}
 					}
+				if (lastChild == null)
+					return null;
 				ele = lastChild;
 				continue;
 			} else if (ele instanceof Alternatives) {
