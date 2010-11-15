@@ -54,11 +54,11 @@ Require-Bundle: org.eclipse.xtext.util;bundle-version="1.0.1";resolution:=option
  org.eclipse.emf.codegen.ecore;resolution:=optional;visibility:=reexport,
  org.eclipse.xtext;bundle-version="1.0.1";resolution:=optional,
  org.eclipse.xtext.common.types;bundle-version="1.0.1";resolution:=optional,
- de.itemis.xtext.antlr;bundle-version="1.0.1";resolution:=optional;visibility:=reexport,
+ de.itemis.xtext.antlr;bundle-version="[1.0.1,2.0.0)";resolution:=optional;visibility:=reexport,
  com.ibm.icu,
  org.eclipse.emf.ecore,
  org.eclipse.emf.common,
- org.antlr.runtime
+ org.antlr.runtime;bundle-version="[3.0.0,3.2.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Import-Package: org.apache.commons.logging;version="1.0.4",
