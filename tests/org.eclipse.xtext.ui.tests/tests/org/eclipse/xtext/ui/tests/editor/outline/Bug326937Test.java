@@ -87,7 +87,7 @@ public class Bug326937Test extends AbstractEditorTest {
 				child1OutlineNode.readOnly(new IUnitOfWork.Void<EObject>() {
 					@Override
 					public void process(EObject state) throws Exception {
-						fail("Unit of work should not be executed for deleted element");
+						assertNull("UoW should be called with null", state);
 					}
 				});
 			}
