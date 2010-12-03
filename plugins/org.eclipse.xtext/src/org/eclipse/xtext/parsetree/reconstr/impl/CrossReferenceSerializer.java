@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.xtext.CrossReference;
 import org.eclipse.xtext.GrammarUtil;
 import org.eclipse.xtext.conversion.IValueConverterService;
+import org.eclipse.xtext.conversion.ValueConverterException;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.linking.impl.LinkingHelper;
 import org.eclipse.xtext.parsetree.AbstractNode;
@@ -69,6 +70,21 @@ public class CrossReferenceSerializer implements ICrossReferenceSerializer {
 		if (eObjectDescription != null)
 			return eObjectDescription.getName();
 		return null;
+	}
+	
+	public boolean isValid(EObject context, CrossReference crossref, EObject target, IErrorAcceptor errorAcceptor) {
+		try {
+			final EReference ref = GrammarUtil.getReference(crossref, context.eClass());
+			String text = getUnconvertedLinkText(target, ref, context);
+			if (text == null)
+				return true; // maybe we'll find something useful in the node model later on?
+			getConvertedValue(text, crossref);
+			return true;
+		} catch (ValueConverterException e) {
+			if (errorAcceptor != null)
+				errorAcceptor.error(e.getMessage());
+			return false;
+		}
 	}
 
 	public String serializeCrossRef(EObject context, CrossReference grammarElement, EObject target, AbstractNode node) {
