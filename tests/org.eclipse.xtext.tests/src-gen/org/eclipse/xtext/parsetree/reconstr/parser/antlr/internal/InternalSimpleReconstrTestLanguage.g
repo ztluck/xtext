@@ -411,6 +411,16 @@ ruleTerm returns [EObject current=null]
         $current = $this_Bug310435Enum_24.current; 
         currentNode = currentNode.getParent();
     }
+
+    |
+    { 
+        currentNode=createCompositeNode(grammarAccess.getTermAccess().getCrossRefNameTestParserRuleCall_25(), currentNode); 
+    }
+    this_CrossRefNameTest_25=ruleCrossRefNameTest
+    { 
+        $current = $this_CrossRefNameTest_25.current; 
+        currentNode = currentNode.getParent();
+    }
 )
 ;
 
@@ -3006,6 +3016,169 @@ ruleBug310435Val returns [EObject current=null]
 
 
 
+// Entry rule entryRuleCrossRefNameTest
+entryRuleCrossRefNameTest returns [EObject current=null] 
+	:
+	{ currentNode = createCompositeNode(grammarAccess.getCrossRefNameTestRule(), currentNode); }
+	 iv_ruleCrossRefNameTest=ruleCrossRefNameTest 
+	 { $current=$iv_ruleCrossRefNameTest.current; } 
+	 EOF 
+;
+
+// Rule CrossRefNameTest
+ruleCrossRefNameTest returns [EObject current=null] 
+    @init { EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+    }
+    @after { resetLookahead(); 
+    	lastConsumedNode = currentNode;
+    }:
+(	'#22' 
+    {
+        createLeafNode(grammarAccess.getCrossRefNameTestAccess().getNumberSignDigitTwoDigitTwoKeyword_0(), null); 
+    }
+(
+(
+		{ 
+	        currentNode=createCompositeNode(grammarAccess.getCrossRefNameTestAccess().getNamedCrossRefNamedParserRuleCall_1_0(), currentNode); 
+	    }
+		lv_named_1_0=ruleCrossRefNamed		{
+	        if ($current==null) {
+	            $current = factory.create(grammarAccess.getCrossRefNameTestRule().getType().getClassifier());
+	            associateNodeWithAstElement(currentNode.getParent(), $current);
+	        }
+	        try {
+	       		add(
+	       			$current, 
+	       			"named",
+	        		lv_named_1_0, 
+	        		"CrossRefNamed", 
+	        		currentNode);
+	        } catch (ValueConverterException vce) {
+				handleValueConverterException(vce);
+	        }
+	        currentNode = currentNode.getParent();
+	    }
+
+)
+)*	'kw1' 
+    {
+        createLeafNode(grammarAccess.getCrossRefNameTestAccess().getKw1Keyword_2(), null); 
+    }
+((	'kw2' 
+    {
+        createLeafNode(grammarAccess.getCrossRefNameTestAccess().getKw2Keyword_3_0_0(), null); 
+    }
+(
+(
+		{
+			if ($current==null) {
+	            $current = factory.create(grammarAccess.getCrossRefNameTestRule().getType().getClassifier());
+	            associateNodeWithAstElement(currentNode, $current);
+	        }
+        }
+	RULE_ID1
+	{
+		createLeafNode(grammarAccess.getCrossRefNameTestAccess().getRefCrossRefNamedCrossReference_3_0_1_0(), "ref"); 
+	}
+
+)
+))
+    |(	'kw3' 
+    {
+        createLeafNode(grammarAccess.getCrossRefNameTestAccess().getKw3Keyword_3_1_0(), null); 
+    }
+(
+(
+		{
+			if ($current==null) {
+	            $current = factory.create(grammarAccess.getCrossRefNameTestRule().getType().getClassifier());
+	            associateNodeWithAstElement(currentNode, $current);
+	        }
+        }
+	RULE_ID2
+	{
+		createLeafNode(grammarAccess.getCrossRefNameTestAccess().getRefCrossRefNamedCrossReference_3_1_1_0(), "ref"); 
+	}
+
+)
+)))*)
+;
+
+
+
+
+
+// Entry rule entryRuleCrossRefNamed
+entryRuleCrossRefNamed returns [EObject current=null] 
+	:
+	{ currentNode = createCompositeNode(grammarAccess.getCrossRefNamedRule(), currentNode); }
+	 iv_ruleCrossRefNamed=ruleCrossRefNamed 
+	 { $current=$iv_ruleCrossRefNamed.current; } 
+	 EOF 
+;
+
+// Rule CrossRefNamed
+ruleCrossRefNamed returns [EObject current=null] 
+    @init { EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+    }
+    @after { resetLookahead(); 
+    	lastConsumedNode = currentNode;
+    }:
+(
+(
+(
+		lv_name_0_1=RULE_ID1
+		{
+			createLeafNode(grammarAccess.getCrossRefNamedAccess().getNameID1TerminalRuleCall_0_0(), "name"); 
+		}
+		{
+	        if ($current==null) {
+	            $current = factory.create(grammarAccess.getCrossRefNamedRule().getType().getClassifier());
+	            associateNodeWithAstElement(currentNode, $current);
+	        }
+	        try {
+	       		set(
+	       			$current, 
+	       			"name",
+	        		lv_name_0_1, 
+	        		"ID1", 
+	        		lastConsumedNode);
+	        } catch (ValueConverterException vce) {
+				handleValueConverterException(vce);
+	        }
+	    }
+
+    |		lv_name_0_2=RULE_ID2
+		{
+			createLeafNode(grammarAccess.getCrossRefNamedAccess().getNameID2TerminalRuleCall_0_1(), "name"); 
+		}
+		{
+	        if ($current==null) {
+	            $current = factory.create(grammarAccess.getCrossRefNamedRule().getType().getClassifier());
+	            associateNodeWithAstElement(currentNode, $current);
+	        }
+	        try {
+	       		set(
+	       			$current, 
+	       			"name",
+	        		lv_name_0_2, 
+	        		"ID2", 
+	        		lastConsumedNode);
+	        } catch (ValueConverterException vce) {
+				handleValueConverterException(vce);
+	        }
+	    }
+
+)
+
+)
+)
+;
+
+
+
+
+
 // Rule EnumBug310435Lit1
 ruleEnumBug310435Lit1 returns [Enumerator current=null] 
     @init { setCurrentLookahead(); resetLookahead(); }
@@ -3035,6 +3208,10 @@ ruleEnumBug310435Lit2 returns [Enumerator current=null]
 );
 
 
+
+RULE_ID1 : 'i' 'd' ('0'..'9')*;
+
+RULE_ID2 : 'I' 'D' ('0'..'9')*;
 
 RULE_ID : '^'? ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
 

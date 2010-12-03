@@ -926,7 +926,7 @@ protected class Model_RefAssignment_8_1_1 extends AssignmentToken  {
 		}
 		if(value instanceof EObject) { // org::eclipse::xtext::impl::CrossReferenceImpl
 			IEObjectConsumer param = createEObjectConsumer((EObject)value);
-			if(param.isInstanceOf(grammarAccess.getModelAccess().getRefChild1CrossReference_8_1_1_0_0().getType().getClassifier())) {
+			if(param.isInstanceOf(grammarAccess.getModelAccess().getRefChild1CrossReference_8_1_1_0_0().getType().getClassifier()) && (!(crossRefSerializer instanceof org.eclipse.xtext.parsetree.reconstr.impl.CrossReferenceSerializer)) || ((org.eclipse.xtext.parsetree.reconstr.impl.CrossReferenceSerializer)crossRefSerializer).isValid(obj.getEObject(), grammarAccess.getModelAccess().getRefChild1CrossReference_8_1_1_0_0(), (EObject)value , null)) {
 				type = AssignmentType.CROSS_REFERENCE;
 				element = grammarAccess.getModelAccess().getRefChild1CrossReference_8_1_1_0_0(); 
 				return obj;
@@ -934,7 +934,7 @@ protected class Model_RefAssignment_8_1_1 extends AssignmentToken  {
 		}
 		if(value instanceof EObject) { // org::eclipse::xtext::impl::CrossReferenceImpl
 			IEObjectConsumer param = createEObjectConsumer((EObject)value);
-			if(param.isInstanceOf(grammarAccess.getModelAccess().getRefChild2CrossReference_8_1_1_0_1().getType().getClassifier())) {
+			if(param.isInstanceOf(grammarAccess.getModelAccess().getRefChild2CrossReference_8_1_1_0_1().getType().getClassifier()) && (!(crossRefSerializer instanceof org.eclipse.xtext.parsetree.reconstr.impl.CrossReferenceSerializer)) || ((org.eclipse.xtext.parsetree.reconstr.impl.CrossReferenceSerializer)crossRefSerializer).isValid(obj.getEObject(), grammarAccess.getModelAccess().getRefChild2CrossReference_8_1_1_0_1(), (EObject)value , null)) {
 				type = AssignmentType.CROSS_REFERENCE;
 				element = grammarAccess.getModelAccess().getRefChild2CrossReference_8_1_1_0_1(); 
 				return obj;
