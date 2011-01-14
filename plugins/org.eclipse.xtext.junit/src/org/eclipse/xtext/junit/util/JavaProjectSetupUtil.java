@@ -105,15 +105,15 @@ public class JavaProjectSetupUtil {
 		}
 		IFolder result = externalFoldersProject.getFolder(externalFolderPath);
 		result.create(true, false, null);
-		JavaModelManager.getExternalManager().addFolder(result.getFullPath());
+//		JavaModelManager.getExternalManager().addFolder(result.getFullPath());
 		return result;
 	}
-	
+
 	public static void deleteExternalFolder(IFolder folder) throws CoreException {
 		JavaModelManager.getExternalManager().removeFolder(folder.getFullPath());
 		folder.delete(true, null);
 	}
-	
+
 	public static IFolder deleteSourceFolder(IJavaProject project, String folderPath) throws JavaModelException,
 			CoreException {
 		IFolder folder = project.getProject().getFolder(folderPath);
@@ -125,7 +125,7 @@ public class JavaProjectSetupUtil {
 	public static void addProjectReference(IJavaProject from, IJavaProject to) throws CoreException {
 		addToClasspath(from, JavaCore.newProjectEntry(to.getPath()));
 	}
-	
+
 	public static void removeProjectReference(IJavaProject from, IJavaProject to) throws CoreException {
 		List<IClasspathEntry> classpath = Lists.newArrayList(from.getRawClasspath());
 		Iterator<IClasspathEntry> iterator = classpath.iterator();
@@ -263,8 +263,9 @@ public class JavaProjectSetupUtil {
 		addToClasspath(javaProject, newLibraryEntry);
 		return newLibraryEntry;
 	}
-	
-	public static IClasspathEntry addExternalFolderToClasspath(IJavaProject javaProject, IFolder folder) throws JavaModelException {
+
+	public static IClasspathEntry addExternalFolderToClasspath(IJavaProject javaProject, IFolder folder)
+			throws JavaModelException {
 		IClasspathEntry newLibraryEntry = JavaCore.newLibraryEntry(folder.getFullPath(), null, null);
 		addToClasspath(javaProject, newLibraryEntry);
 		return newLibraryEntry;
