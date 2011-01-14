@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.xtext.example.fowlerdsl;bundle-version="1.0.1",
  org.eclipse.xtext.xtend;bundle-version="1.0.1";resolution:=optional,
  org.eclipse.ui.editors,
  org.eclipse.ui,
- org.antlr.runtime;bundle-version="[3.0.1,3.0.1]",
+ org.antlr.runtime;bundle-version="[3.0.0,3.0.2)",
  org.eclipse.xtext.ui.shared;bundle-version="1.0.1"
 Bundle-Activator: org.eclipse.xtext.example.FowlerDslActivator
 Bundle-ActivationPolicy: lazy
