@@ -15,7 +15,12 @@
 			</cs:actorProperties>
 			<cs:products alias="output" base="${buckminster.output}/site.tp/" />
 		</cs:private>
-
+		<cs:public name="create.category.xml" actor="ant">
+			<cs:actorProperties>
+				<cs:property key="buildFile" value="packaging.ant" />
+				<cs:property key="targets" value="-create.category.xml" />
+			</cs:actorProperties>
+		</cs:public>
 		<cs:public name="package.tmf-xtext-Update" actor="ant">
 			<cs:actorProperties>
 				<cs:property key="buildFile" value="packaging.ant" />
