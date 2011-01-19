@@ -18,7 +18,7 @@
    <feature id="org.eclipse.xtext.xbase" version="0.0.0">
       <category name="xtextHelios"/>
    </feature>
-   <category-def name="xtextHelios" label="TMF Xtext${package.qualifier}">
+   <category-def name="xtextHelios" label="TMF Xtext${package.qualifier} Helios">
       <description>
         With Xtext you can easily create your own programming languages
         and domain-specific languages (DSLs). The framework supports the
