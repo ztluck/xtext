@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -22,8 +21,8 @@ import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.xtext.ui.IImageHelper;
 import org.eclipse.xtext.ui.editor.model.edit.IssueUtil;
 import org.eclipse.xtext.ui.internal.XtextPluginImages;
@@ -103,6 +102,8 @@ public class XtextEditorErrorTickUpdater extends IXtextEditorCallback.NullImpl i
 
 	@SuppressWarnings("unchecked")
 	protected Severity getSeverity(XtextEditor xtextEditor) {
+		if (xtextEditor == null || xtextEditor.getInternalSourceViewer() == null)
+			return null;
 		IAnnotationModel model = xtextEditor.getInternalSourceViewer().getAnnotationModel();
 		if (model != null) {
 			Iterator<Annotation> iterator = model.getAnnotationIterator();
@@ -143,7 +144,7 @@ public class XtextEditorErrorTickUpdater extends IXtextEditorCallback.NullImpl i
 		updateEditorImage(editor);
 	}
 
-	protected class UpdateEditorImageJob extends Job {
+	protected class UpdateEditorImageJob extends UIJob {
 		private volatile Image titleImage;
 
 		public UpdateEditorImageJob(ISchedulingRule schedulingRule) {
@@ -152,19 +153,12 @@ public class XtextEditorErrorTickUpdater extends IXtextEditorCallback.NullImpl i
 		}
 
 		@Override
-		protected IStatus run(final IProgressMonitor monitor) {
+		public IStatus runInUIThread(final IProgressMonitor monitor) {
 			IEditorSite site = null != editor ? editor.getEditorSite() : null;
 			if (site != null) {
-				Shell shell = site.getShell();
-				if (shell != null && !shell.isDisposed()) {
-					shell.getDisplay().syncExec(new Runnable() {
-						public void run() {
-							if (!monitor.isCanceled() && titleImage != null && !titleImage.isDisposed()
-									&& editor != null) {
-								editor.updatedTitleImage(titleImage);
-							}
-						}
-					});
+				if (!monitor.isCanceled() && titleImage != null && !titleImage.isDisposed()
+					&& editor != null) {
+					editor.updatedTitleImage(titleImage);
 				}
 			}
 			return Status.OK_STATUS;
