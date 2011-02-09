@@ -68,7 +68,11 @@ public class InterpreterAutoEdit implements IAutoEditStrategy {
 	}
 
 	protected BigDecimal evaluate(Evaluation stmt) {
-		return new Calculator().evaluate(stmt.getExpression());
+		try {
+			return new Calculator().evaluate(stmt.getExpression());
+		} catch (Exception e){
+			return null;
+		}
 	}
 
 	protected Evaluation findEvaluation(final DocumentCommand command,
