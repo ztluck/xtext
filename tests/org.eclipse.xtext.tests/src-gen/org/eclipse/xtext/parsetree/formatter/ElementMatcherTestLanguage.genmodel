@@ -55,6 +55,17 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ElementMatcherTestLanguage.ecore#//Loop/strings"/>
     </genClasses>
     <genClasses ecoreClass="ElementMatcherTestLanguage.ecore#//Expression"/>
+    <genClasses ecoreClass="ElementMatcherTestLanguage.ecore#//RuleCalls12">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ElementMatcherTestLanguage.ecore#//RuleCalls12/constructor"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ElementMatcherTestLanguage.ecore#//RuleCalls12/fields"/>
+    </genClasses>
+    <genClasses ecoreClass="ElementMatcherTestLanguage.ecore#//Constructor">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ElementMatcherTestLanguage.ecore#//Constructor/kw1"/>
+    </genClasses>
+    <genClasses ecoreClass="ElementMatcherTestLanguage.ecore#//Field"/>
+    <genClasses ecoreClass="ElementMatcherTestLanguage.ecore#//Parameter">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ElementMatcherTestLanguage.ecore#//Parameter/kw2"/>
+    </genClasses>
     <genClasses ecoreClass="ElementMatcherTestLanguage.ecore#//Add">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ElementMatcherTestLanguage.ecore#//Add/left"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ElementMatcherTestLanguage.ecore#//Add/right"/>
