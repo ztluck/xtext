@@ -45,7 +45,7 @@ public class SourceAdapter extends AdapterImpl {
 	private Set<EObject> sources;
 	
 	protected SourceAdapter() {
-		this.sources = Sets.newHashSet();
+		this.sources = Sets.newLinkedHashSet();
 	}
 	
 	@Override
