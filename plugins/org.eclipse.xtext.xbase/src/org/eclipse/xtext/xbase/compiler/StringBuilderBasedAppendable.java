@@ -18,6 +18,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
 
+import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmType;
 
 public class StringBuilderBasedAppendable implements IAppendable {
@@ -102,9 +103,13 @@ public class StringBuilderBasedAppendable implements IAppendable {
 		if (localVars.isEmpty())
 			throw new IllegalStateException("No local scope has been opened.");
 		Map<Object, String> currentScope = localVars.peek();
-		final Set<String> names = newHashSet();
-		for (Set<String> nameSet : usedNamesInScope) {
-			names.addAll(nameSet);
+		final Set<String> names = newHashSet(usedNamesInScope.peek());
+		for (Map<Object, String> variables : localVars) {
+			for (Entry<Object, String> entry : variables.entrySet()) {
+				if (entry.getKey() instanceof JvmIdentifiableElement) {
+					names.add(entry.getValue());
+				}
+			}
 		}
 		String newName = findNewName(names, proposedName);
 		currentScope.put(key, newName);

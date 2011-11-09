@@ -29,6 +29,92 @@ class Xtend2CompilerTest extends AbstractXtend2TestCase {
 			}
 		''')
 	}
+	
+	def testFreshNames() { 
+		assertCompilesTo('''
+			package foo
+			class Bar {
+				def boolean doStuff(java.lang.Class _class) {
+					"foo".^class == _class
+				}
+			}
+		''', '''
+			package foo;
+			
+			import org.eclipse.xtext.xbase.lib.ObjectExtensions;
+			
+			@SuppressWarnings("all")
+			public class Bar {
+			  public boolean doStuff(final Class _class) {
+			    Class<? extends Object> _class_1 = "foo".getClass();
+			    boolean _operator_equals = ObjectExtensions.operator_equals(_class_1, _class);
+			    return _operator_equals;
+			  }
+			}
+		''')
+	}
+	
+	def testFreshNames_2() { 
+		assertCompilesTo('''
+			package foo
+			class Bar {
+				def void doStuff() {
+					val x = "foo".^class
+					val x2 = [| "foo".^class ]
+				}
+			}
+		''', '''
+			package foo;
+			
+			import org.eclipse.xtext.xbase.lib.Functions.Function0;
+			
+			@SuppressWarnings("all")
+			public class Bar {
+			  public void doStuff() {
+			      Class<? extends Object> _class = "foo".getClass();
+			      final Class<? extends Object> x = _class;
+			      final Function0<Class<? extends Object>> _function = new Function0<Class<? extends Object>>() {
+			          public Class<? extends Object> apply() {
+			            Class<? extends Object> _class = "foo".getClass();
+			            return _class;
+			          }
+			        };
+			      final Function0<Class<? extends Object>> x2 = _function;
+			  }
+			}
+		''')
+	}
+	
+	def testFreshNames_3() { 
+		assertCompilesTo('''
+			package foo
+			class Bar {
+				def void doStuff(String _class) {
+					val x = "foo".^class
+					val x2 = [| "foo".^class ]
+				}
+			}
+		''', '''
+			package foo;
+			
+			import org.eclipse.xtext.xbase.lib.Functions.Function0;
+			
+			@SuppressWarnings("all")
+			public class Bar {
+			  public void doStuff(final String _class) {
+			      Class<? extends Object> _class_1 = "foo".getClass();
+			      final Class<? extends Object> x = _class_1;
+			      final Function0<Class<? extends Object>> _function = new Function0<Class<? extends Object>>() {
+			          public Class<? extends Object> apply() {
+			            Class<? extends Object> _class_1 = "foo".getClass();
+			            return _class_1;
+			          }
+			        };
+			      final Function0<Class<? extends Object>> x2 = _function;
+			  }
+			}
+		''')
+	}
 
 	def testSimple() { 
 		assertCompilesTo('''
