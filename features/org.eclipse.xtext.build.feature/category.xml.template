@@ -24,7 +24,7 @@
    <feature id="org.eclipse.xtext.xbase" version="0.0.0">
       <category name="xtext"/>
    </feature>
-   <category-def name="xtext" label="TMF Xtext${package.qualifier}">
+   <category-def name="xtext" label="TMF Xtext${package.qualifier} (2.1.x)">
       <description>
         With Xtext you can easily create your own programming languages
         and domain-specific languages (DSLs). The framework supports the
