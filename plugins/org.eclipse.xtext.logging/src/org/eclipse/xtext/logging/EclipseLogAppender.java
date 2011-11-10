@@ -27,7 +27,7 @@ public class EclipseLogAppender extends AppenderSkeleton {
 	private static final String ORG_APACHE_LOG4J = "org.apache.log4j";
 	private ILog log = null;
 
-	private synchronized ILog getLog(String loggerName) {
+	private synchronized ILog getLog() {
 		if (log == null) {
 			final String version = "1.2.15";
 			Bundle[] bundles = Platform.getBundles(ORG_APACHE_LOG4J,version);
@@ -42,10 +42,10 @@ public class EclipseLogAppender extends AppenderSkeleton {
 	protected void append(LoggingEvent event) {
 		if (isDoLog(event.getLevel())) {
 			String logString = layout.format(event);
-			String loggerName = event.getLoggerName();
 
-			ILog myLog = getLog(loggerName);
+			ILog myLog = getLog();
 			if (myLog != null) {
+				String loggerName = event.getLoggerName();
 				int severity = mapLevel(event.getLevel());
 				final Throwable throwable = event.getThrowableInformation() != null ? event.getThrowableInformation()
 						.getThrowable() : null;
@@ -61,7 +61,7 @@ public class EclipseLogAppender extends AppenderSkeleton {
 	}
 
 	private boolean isDoLog(Level level) {
-		return log!=null && (level.toInt() >= Priority.WARN_INT);
+		return getLog() != null && level.toInt() >= Priority.WARN_INT;
 	}
 
 	private int mapLevel(Level level) {
