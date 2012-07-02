@@ -13,12 +13,10 @@
                 <message_argument value="org.eclipse.xtext.xbase"/>
             </message_arguments>
         </filter>
-    </resource>
-    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.xtext.xbase.ui.hierarchy.AbstractTypeHierarchyHandler">
-        <filter comment="Hierarchy package is no longer API" id="305324134">
+        <filter comment="self-managed version constraint" id="927989779">
             <message_arguments>
-                <message_argument value="org.eclipse.xtext.xbase.ui.hierarchy.AbstractTypeHierarchyHandler"/>
-                <message_argument value="org.eclipse.xtext.xbase.ui_2.3.0"/>
+                <message_argument value="2.3.1"/>
+                <message_argument value="org.eclipse.xtext.xbase"/>
             </message_arguments>
         </filter>
     </resource>
