@@ -11,6 +11,9 @@ package org.eclipse.xtext.ui.wizard;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.log4j.Logger;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -18,6 +21,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.xtext.ui.util.FileOpener;
 
 import com.google.inject.Inject;
@@ -25,7 +29,7 @@ import com.google.inject.Inject;
 /**
  * @author Peter Friese - Initial contribution and API
  */
-public abstract class XtextNewProjectWizard extends Wizard implements INewWizard {
+public abstract class XtextNewProjectWizard extends Wizard implements INewWizard, IExecutableExtension {
 
 	private static final Logger logger = Logger.getLogger(XtextNewProjectWizard.class);
 
@@ -37,6 +41,8 @@ public abstract class XtextNewProjectWizard extends Wizard implements INewWizard
 	private IProjectCreator creator;
 
 	private IWorkbench workbench;
+
+	private IConfigurationElement configElement;
 	
 	public XtextNewProjectWizard(IProjectCreator creator) {
 		this.creator = creator;
@@ -63,6 +69,8 @@ public abstract class XtextNewProjectWizard extends Wizard implements INewWizard
 		};
 		try {
 			getContainer().run(true, false, op);
+			// Handle perspective update after finish
+			BasicNewProjectResourceWizard.updatePerspective(configElement);
 		}
 		catch (InterruptedException e) {
 			return false;
@@ -104,4 +112,16 @@ public abstract class XtextNewProjectWizard extends Wizard implements INewWizard
 		return creator;
 	}
 
+	/**
+	 * <p>
+	 * We need {@link IConfigurationElement} to support perspective update on finish.
+	 * </p>
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=381545
+	 * 
+	 * @since 2.3
+	 */
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
+			throws CoreException {
+		this.configElement = config;
+	}
 }
