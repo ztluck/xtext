@@ -136,4 +136,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="testdata/testdata/CoercionClient.java" type="testdata.CoercionClient">
+        <filter comment="Since 2.3.1" id="1109393411">
+            <message_arguments>
+                <message_argument value="2.3.1"/>
+                <message_argument value="testdata.CoercionClient"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>
