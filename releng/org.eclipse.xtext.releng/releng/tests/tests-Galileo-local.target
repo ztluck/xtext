@@ -40,6 +40,7 @@
 <repository location="https://hudson.eclipse.org/hudson/job/Xpand-nightly-HEAD/lastSuccessfulBuild/artifact/xpand.p2.repository/"/>
 </location>
 <location includeAllPlatforms="false" includeMode="planner" includeSource="false" type="InstallableUnit">
+<unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.emf.mwe.sdk.feature.group" version="0.0.0"/>
 <repository location="https://hudson.eclipse.org/hudson/job/MWE-nightly-HEAD/lastSuccessfulBuild/artifact/mwe.p2.repository/"/>
 </location>
