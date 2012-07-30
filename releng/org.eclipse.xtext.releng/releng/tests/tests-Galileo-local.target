@@ -42,7 +42,11 @@
 <location includeAllPlatforms="false" includeMode="planner" includeSource="false" type="InstallableUnit">
 <unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.emf.mwe.sdk.feature.group" version="0.0.0"/>
-<repository location="https://hudson.eclipse.org/hudson/job/MWE-nightly-HEAD/lastSuccessfulBuild/artifact/mwe.p2.repository/"/>
+<repository location="http://download.eclipse.org/modeling/emft/mwe/updates/releases/R201206110920/mwe/"/>
+</location>
+<location includeAllPlatforms="false" includeMode="planner" includeSource="false" type="InstallableUnit">
+<unit id="org.eclipse.emf.mwe2.language.ui" version="0.0.0"/>
+<repository location="http://download.eclipse.org/modeling/emft/mwe/updates/releases/R201206120758/mwe2lang/"/>
 </location>
 <location includeAllPlatforms="false" includeMode="planner" includeSource="false" type="InstallableUnit">
 <unit id="org.eclipse.xtext.sdk.feature.group" version="0.0.0"/>
