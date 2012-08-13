@@ -58,7 +58,7 @@
   </rm:searchPath>
   <rm:searchPath name="orbit">
     <rm:provider componentTypes="eclipse.feature,osgi.bundle" readerType="p2" source="false" mutable="false">
-      <rm:uri format="{0}/modeling/tmf/xtext/updates/orbit">
+      <rm:uri format="{0}/modeling/tmf/xtext/updates/orbit/maintenance/">
         <bc:propertyRef key="eclipse.download"/>
       </rm:uri>
     </rm:provider>
