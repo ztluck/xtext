@@ -29,6 +29,8 @@ public class IssueResolution {
 	}
 	
 	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 * 
 	 * @since 2.3
 	 */
 	public IssueResolution(String label, String description, String image, IModificationContext modificationContext, IModification modification, int relevance) {
@@ -41,6 +43,8 @@ public class IssueResolution {
 	}
 	
 	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 * 
 	 * @since 2.3
 	 */
 	public int getRelevance() {

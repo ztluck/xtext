@@ -219,6 +219,8 @@ public final class TypeMatchFilters {
 	}
 	
 	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 * 
 	 * @since 2.3
 	 */
 	public static class NonRestrictedAccess implements ITypesProposalProvider.Filter {

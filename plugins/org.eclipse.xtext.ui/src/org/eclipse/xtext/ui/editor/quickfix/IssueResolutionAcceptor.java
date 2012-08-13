@@ -44,6 +44,8 @@ public class IssueResolutionAcceptor {
 	}
 	
 	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 * 
 	 * @since 2.3
 	 */
 	public void accept(Issue issue, String label, String description, String image, IModification modification, int relevance) {
@@ -52,6 +54,8 @@ public class IssueResolutionAcceptor {
 	}
 	
 	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 * 
 	 * @since 2.3
 	 */
 	public void accept(Issue issue, String label, String description, String image, ISemanticModification semanticModification, int relevance) {

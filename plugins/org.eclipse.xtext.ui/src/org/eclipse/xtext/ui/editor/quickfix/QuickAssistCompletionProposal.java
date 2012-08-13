@@ -45,6 +45,8 @@ public class QuickAssistCompletionProposal implements ICompletionProposal, IComp
 	}
 	
 	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 * 
 	 * @since 2.3
 	 */
 	public int getRelevance() {
