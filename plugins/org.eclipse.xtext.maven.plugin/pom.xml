@@ -111,25 +111,6 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<artifactId>maven-install-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>pue-xbase</id>
-						<phase>pre-integration-test</phase>
-						<goals>
-							<goal>install</goal>
-						</goals>
-						<configuration>
-							<groupId>org.eclipse.xtext</groupId>
-							<artifactId>org.eclipse.xtext.purexbase</artifactId>
-							<version>IT-SNAPSHOT</version>
-							<packaging>jar</packaging>
-							<pomFile>../org.eclipse.xtext.purexbase/pom.xml</pomFile>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<executions>
 					<execution>
