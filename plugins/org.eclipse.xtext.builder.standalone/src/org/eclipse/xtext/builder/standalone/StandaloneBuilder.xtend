@@ -14,7 +14,6 @@ import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.builder.standalone.compiler.IJavaCompiler
 import org.eclipse.xtext.builder.standalone.compiler.IJavaCompiler.CompilationResult
-import org.eclipse.xtext.builder.standalone.resource.impl.ResourceDescriptionsData
 import org.eclipse.xtext.common.types.access.impl.ClasspathTypeProvider
 import org.eclipse.xtext.common.types.access.impl.IndexedJvmTypeAccess
 import org.eclipse.xtext.generator.AbstractFileSystemAccess
@@ -23,6 +22,7 @@ import org.eclipse.xtext.mwe.NameBasedFilter
 import org.eclipse.xtext.mwe.PathTraverser
 import org.eclipse.xtext.parser.IEncodingProvider
 import org.eclipse.xtext.resource.XtextResourceSet
+import org.eclipse.xtext.resource.impl.ResourceDescriptionsData
 import org.eclipse.xtext.util.CancelIndicator
 import org.eclipse.xtext.validation.CheckMode
 
@@ -87,7 +87,7 @@ class StandaloneBuilder {
 			case CompilationResult.SKIPPED:
 				LOG.info("Nothing to compile. Stubs compilation was skipped.")
 			case CompilationResult.FAILED:
-				LOG.warn("Stubs compilation failed.")
+				LOG.warn("Stubs compilation finished with errors.")
 		}
 		return stubsClasses.absolutePath
 	}
