@@ -54,6 +54,7 @@ public class XtextGenerator extends AbstractMojo {
 	 * The project itself. This parameter is set by maven.
 	 * 
 	 * @parameter expression="${project}"
+	 * @readonly
 	 * @required
 	 */
 	protected MavenProject project;
@@ -100,6 +101,13 @@ public class XtextGenerator extends AbstractMojo {
 	 */
 	private String compilerTargetLevel;
 
+	/**
+	 * RegEx expression to filter class path during model files look up
+	 * 
+	 * @parameter
+	 */
+	private String classPathLookupFilter;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -121,15 +129,21 @@ public class XtextGenerator extends AbstractMojo {
 		}
 	}
 
-	protected void internalExecute() throws MojoExecutionException, MojoFailureException {
-		Map<String, LanguageAccess> languages = new LanguageAccessFactory().createLanguageAccess(getLanguages(), this
-				.getClass().getClassLoader(), project.getBasedir());
-		Iterable<String> classPathEntries = filter(getClasspathElements(), emptyStringFilter());
-		Injector injector = Guice.createInjector(new MavenStandaloneBuilderModule());
-		StandaloneBuilder builder = injector.getInstance(StandaloneBuilder.class);
+	protected void internalExecute() throws MojoExecutionException,
+			MojoFailureException {
+		Map<String, LanguageAccess> languages = new LanguageAccessFactory()
+				.createLanguageAccess(getLanguages(), this.getClass()
+						.getClassLoader(), project.getBasedir());
+		Iterable<String> classPathEntries = filter(getClasspathElements(),
+				emptyStringFilter());
+		Injector injector = Guice
+				.createInjector(new MavenStandaloneBuilderModule());
+		StandaloneBuilder builder = injector
+				.getInstance(StandaloneBuilder.class);
 		builder.setLanguages(languages);
 		builder.setEncoding(encoding);
 		builder.setClassPathEntries(classPathEntries);
+		builder.setClassPathLookUpFilter(classPathLookupFilter);
 		builder.setSourceDirs(sourceRoots);
 		builder.setFailOnValidationError(failOnValidationError);
 		builder.setTempDir(createTempDir().getAbsolutePath());
@@ -137,7 +151,8 @@ public class XtextGenerator extends AbstractMojo {
 		logState();
 		boolean errorDetected = !builder.launch();
 		if (errorDetected) {
-			throw new MojoExecutionException("Execution failed due to a severe validation error.");
+			throw new MojoExecutionException(
+					"Execution failed due to a severe validation error.");
 		}
 	}
 
@@ -149,19 +164,24 @@ public class XtextGenerator extends AbstractMojo {
 	}
 
 	private void logState() {
-		getLog().info("Encoding: " + encoding);
+		getLog().info("Encoding: " + (encoding==null?"not set. Encoding provider will be used.":encoding));
 		getLog().info("Compiler source level: " + compilerSourceLevel);
 		getLog().info("Compiler target level: " + compilerTargetLevel);
 		if (getLog().isDebugEnabled()) {
-			getLog().debug("Source dirs: " + IterableExtensions.join(sourceRoots, ", "));
-			getLog().debug("Classpath entries: " + IterableExtensions.join(classpathElements, ", "));
+			getLog().debug(
+					"Source dirs: "
+							+ IterableExtensions.join(sourceRoots, ", "));
+			getLog().debug(
+					"Classpath entries: "
+							+ IterableExtensions.join(classpathElements, ", "));
 		}
 	}
 
 	private File createTempDir() {
 		File tmpDir = new File(tmpClassDirectory);
 		if (!tmpDir.mkdirs() && !tmpDir.exists()) {
-			throw new IllegalArgumentException("Couldn't create directory '"+tmpClassDirectory+"'.");
+			throw new IllegalArgumentException("Couldn't create directory '"
+					+ tmpClassDirectory + "'.");
 		}
 		return tmpDir;
 	}
