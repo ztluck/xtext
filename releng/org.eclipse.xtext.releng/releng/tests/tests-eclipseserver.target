@@ -30,7 +30,7 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
 <unit id="org.eclipse.emf.mwe.sdk.feature.group" version="1.3.3.v201406110919"/>
-<repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/maintenance/"/>
+<repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/maintenance/releases"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
 <unit id="org.eclipse.xtext.sdk.feature.group" version="0.0.0"/>
