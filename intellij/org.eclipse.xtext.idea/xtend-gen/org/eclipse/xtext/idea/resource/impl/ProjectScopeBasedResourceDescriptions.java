@@ -92,15 +92,7 @@ public class ProjectScopeBasedResourceDescriptions extends AbstractScopeBasedSel
   }
   
   public boolean isIndexing() {
-    boolean _xblockexpression = false;
-    {
-      boolean _isIndexing = this.compilerPhases.isIndexing(this.context);
-      if (_isIndexing) {
-        return true;
-      }
-      _xblockexpression = DumbService.isDumb(this.project);
-    }
-    return _xblockexpression;
+    return DumbService.isDumb(this.project);
   }
   
   @Pure

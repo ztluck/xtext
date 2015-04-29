@@ -64,9 +64,6 @@ class ProjectScopeBasedResourceDescriptions extends AbstractScopeBasedSelectable
 	}
 
 	def isIndexing() {
-		if (compilerPhases.isIndexing(context)) {
-			return true
-		}
 		DumbService.isDumb(project)
 	}
 
