@@ -22,6 +22,7 @@ import static extension com.intellij.openapi.roots.ModuleRootModificationUtil.*
 import static extension com.intellij.openapi.vfs.VfsUtil.*
 import static extension com.intellij.util.PathUtil.*
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.openapi.application.ApplicationManager
 
 class LibraryUtil {
 
@@ -38,28 +39,18 @@ class LibraryUtil {
 	}
 
 	static def addXbaseLibrary(ModifiableRootModel it) {
-		removeLibFromIgnoredFilesList
 		addGuavaLibrary
 		addLibrary("org.eclipse.xtext.xbase.lib", ToStringBuilder)
 	}
-	
+
 	static def addXtendLibrary(Module it) {
 		updateModel[addXtendLibrary]
 	}
 
 	static def addXtendLibrary(ModifiableRootModel it) {
-		removeLibFromIgnoredFilesList
 		addXbaseLibrary
 		addLibrary("org.eclipse.xtend.lib.macro", Active)
 		addLibrary("org.eclipse.xtend.lib", Data)
-	}
-
-	static def removeLibFromIgnoredFilesList() {
-		val fileTypeManager = FileTypeManager.instance
-		val ignoredFilesList = fileTypeManager.ignoredFilesList.split('\\*\\.lib;')
-		if (ignoredFilesList.length > 1) {
-			fileTypeManager.ignoredFilesList = ignoredFilesList.reduce[p1, p2|p1 + p2]
-		}
 	}
 
 	static def void addLibrary(Module it, String libName, Class<?> clazz) {
@@ -67,9 +58,21 @@ class LibraryUtil {
 	}
 
 	static def void addLibrary(ModifiableRootModel it, String libName, Class<?> clazz) {
+		removeLibFromIgnoredFilesList
 		val libraryModel = moduleLibraryTable.createLibrary(libName).modifiableModel
 		libraryModel.addRoot(clazz.urlForLibraryRoot, OrderRootType.CLASSES)
 		libraryModel.commit
+	}
+
+	static def removeLibFromIgnoredFilesList() {
+		ApplicationManager.application.<Void>runWriteAction [
+			val fileTypeManager = FileTypeManager.instance
+			val ignoredFilesList = fileTypeManager.ignoredFilesList.split('\\*\\.lib;')
+			if (ignoredFilesList.length > 1) {
+				fileTypeManager.ignoredFilesList = ignoredFilesList.reduce[p1, p2|p1 + p2]
+			}
+			null
+		]
 	}
 
 	static def getUrlForLibraryRoot(Class<?> clazz) {
