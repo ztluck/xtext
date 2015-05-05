@@ -7,12 +7,22 @@
  */
 package org.eclipse.xtext.builder.standalone.incremental;
 
+import com.google.common.collect.Iterables;
+import com.google.inject.ImplementedBy;
 import org.eclipse.emf.common.util.URI;
 
 /**
  * @author Jan Koehnlein - Initial contribution and API
  */
+@ImplementedBy(IClassFileBasedDependencyFinder.NullImpl.class)
 @SuppressWarnings("all")
 public interface IClassFileBasedDependencyFinder {
+  public static class NullImpl implements IClassFileBasedDependencyFinder {
+    @Override
+    public Iterable<URI> getDependentJavaFiles(final Iterable<URI> dirtyJavaFiles, final Iterable<URI> deletedJavaFiles) {
+      return Iterables.<URI>concat(dirtyJavaFiles, deletedJavaFiles);
+    }
+  }
+  
   public abstract Iterable<URI> getDependentJavaFiles(final Iterable<URI> dirtyJavaFiles, final Iterable<URI> deletedJavaFiles);
 }

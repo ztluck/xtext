@@ -8,11 +8,21 @@
 package org.eclipse.xtext.builder.standalone.incremental
 
 import org.eclipse.emf.common.util.URI
+import com.google.inject.ImplementedBy
 
 /**
  * @author Jan Koehnlein - Initial contribution and API
  */
+@ImplementedBy(IClassFileBasedDependencyFinder.NullImpl)
 interface IClassFileBasedDependencyFinder {
 	
-	def Iterable<URI> getDependentJavaFiles(Iterable<URI> dirtyJavaFiles, Iterable<URI> deletedJavaFiles) 
+	def Iterable<URI> getDependentJavaFiles(Iterable<URI> dirtyJavaFiles, Iterable<URI> deletedJavaFiles)
+	
+	static class NullImpl implements IClassFileBasedDependencyFinder {
+		
+		override getDependentJavaFiles(Iterable<URI> dirtyJavaFiles, Iterable<URI> deletedJavaFiles) {
+			dirtyJavaFiles + deletedJavaFiles
+		}
+		
+	} 
 }
